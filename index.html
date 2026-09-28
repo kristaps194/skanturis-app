@@ -1,0 +1,2183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>SkanTuris · album cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Courier+Prime:ital,wght@0,400;0,700;1,400;1,700&family=Schibsted+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --page:#ECEBE7; --surface:#F7F6F3; --stage:#DFDDD7; --text:#1F1F1D; --muted:#5C5B56;
+  --line:#CFCDC6; --field:#FFFFFF; --primary:#1F1F1D; --on-primary:#F7F6F3;
+  --ok:#2F5D45; --warn:#8A3A1E; --focus:#1B3048;
+  --ui:'Schibsted Grotesk',ui-sans-serif,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'Courier Prime','Courier New',Courier,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --page:#151514; --surface:#1D1D1B; --stage:#101010; --text:#ECE8E0; --muted:#A5A29B;
+    --line:#35342F; --field:#232321; --primary:#ECE8E0; --on-primary:#1F1F1D;
+    --ok:#9CC9AE; --warn:#F0A787; --focus:#D8E4F0;
+  }
+}
+:root[data-theme="dark"]{
+  --page:#151514; --surface:#1D1D1B; --stage:#101010; --text:#ECE8E0; --muted:#A5A29B;
+  --line:#35342F; --field:#232321; --primary:#ECE8E0; --on-primary:#1F1F1D;
+  --ok:#9CC9AE; --warn:#F0A787; --focus:#D8E4F0;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--page);color:var(--text);font-family:var(--ui);font-size:15px;line-height:1.45;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.wrap{max-width:1280px;margin:0 auto;padding:20px 24px 48px}
+.top{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:4px 0 18px}
+.top h1{margin:0;font-size:22px;font-weight:700;letter-spacing:-0.01em}
+.top p{margin:0;color:var(--muted);font-size:14px}
+.studio{display:grid;grid-template-columns:minmax(300px,380px) 1fr;gap:20px;align-items:start}
+@media (max-width:900px){.studio{grid-template-columns:1fr}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:18px}
+.editor{display:flex;flex-direction:column;gap:14px}
+.field{display:flex;flex-direction:column;gap:5px}
+.field>label,.legend{font-size:13px;font-weight:600;color:var(--muted)}
+.row{display:flex;gap:10px}
+.row>.field{flex:1;min-width:0}
+input[type=text],input[type=url],input[type=number],textarea{width:100%;background:var(--field);border:1px solid var(--line);border-radius:6px;padding:8px 10px;min-height:40px}
+textarea{resize:vertical;min-height:88px;font-family:var(--mono);font-size:14px;line-height:1.35}
+.hint{font-size:12.5px;color:var(--muted);overflow-wrap:anywhere}
+.hint.warn{color:var(--warn)}
+.hint.ok{color:var(--ok)}
+.counter{font-variant-numeric:tabular-nums}
+.drop{font-weight:400;color:var(--text);display:flex;gap:12px;align-items:center;border:1px dashed var(--line);border-radius:8px;padding:10px;background:var(--field);cursor:pointer;min-height:84px}
+.drop.over{border-color:var(--text)}
+.drop img{width:64px;height:64px;object-fit:cover;border-radius:4px;flex-shrink:0;background:var(--stage)}
+.drop .ph{width:64px;height:64px;border-radius:4px;flex-shrink:0;background:var(--stage)}
+.drop strong{display:block;font-size:14px}
+.checks{display:flex;flex-wrap:wrap;gap:8px}
+.check{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);border-radius:999px;padding:6px 12px;min-height:40px;cursor:pointer;background:var(--field)}
+.check input{width:16px;height:16px;margin:0;accent-color:var(--text)}
+details{border-top:1px solid var(--line);padding-top:10px}
+summary{cursor:pointer;font-size:13px;font-weight:600;color:var(--muted);min-height:28px}
+details .row{margin-top:10px}
+.actions{display:flex;gap:10px;flex-wrap:wrap}
+.btn{border:1px solid var(--line);background:var(--field);border-radius:6px;padding:9px 14px;min-height:40px;cursor:pointer;font-weight:500}
+.btn:hover{border-color:var(--text)}
+.btn.primary{background:var(--primary);color:var(--on-primary);border-color:var(--primary);font-weight:600}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.btn.danger{color:var(--warn)}
+.stage{background:var(--stage);border-radius:10px;padding:24px;display:flex;flex-direction:column;gap:20px;min-width:0}
+.cards{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center}
+.card-slot{display:flex;flex-direction:column;gap:8px;align-items:center}
+.card-slot canvas{display:block;width:100%;height:auto;box-shadow:0 1px 0 rgba(0,0,0,.08),0 12px 28px -18px rgba(0,0,0,.55)}
+.card-slot.tall{width:min(100%,300px)}
+.card-slot.wide{width:min(100%,380px)}
+.card-slot .cap{font-size:12.5px;color:var(--muted)}
+.dl{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.dl .btn{min-height:36px;padding:7px 12px;font-size:14px}
+.theme{display:flex;flex-direction:column;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:14px}
+.theme-top{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;font-size:12px;color:var(--muted)}
+.sw input{position:absolute;opacity:0;pointer-events:none}
+.sw .chip{width:44px;height:44px;border-radius:50%;border:2px solid transparent;display:flex;overflow:hidden;outline:1px solid var(--line)}
+.sw .chip span{flex:1}
+.sw input:checked+.chip{border-color:var(--text)}
+.sw input:focus-visible+.chip{outline:2px solid var(--focus);outline-offset:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden}
+.seg label{padding:6px 12px;cursor:pointer;min-height:36px;display:flex;align-items:center;font-size:14px}
+.seg input{position:absolute;opacity:0;pointer-events:none}
+.seg label:has(input:checked){background:var(--primary);color:var(--on-primary)}
+.seg label:has(input:focus-visible){outline:2px solid var(--focus);outline-offset:-2px}
+.library{margin-top:28px}
+.lib-head{display:flex;justify-content:space-between;align-items:start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.lib-head h2{margin:0;font-size:18px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.filters .search{width:220px;min-height:36px}
+.chipbtn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 12px;min-height:36px;cursor:pointer;font-size:14px}
+.chipbtn[aria-pressed="true"]{background:var(--primary);color:var(--on-primary);border-color:var(--primary)}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.item{display:grid;grid-template-columns:52px minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:10px 14px;border-top:1px solid var(--line)}
+.item:first-child{border-top:0}
+.item img,.item .ph{width:52px;height:52px;object-fit:cover;border-radius:3px;background:var(--stage)}
+.item .t{min-width:0}
+.item .t b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}
+.item .t span{display:block;color:var(--muted);font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .fmt{display:flex;gap:6px;flex-wrap:wrap}
+.item .fmt .check{min-height:34px;padding:4px 10px;font-size:13.5px}
+.item .ops{display:flex;gap:6px}
+.item .ops .btn{min-height:34px;padding:5px 10px;font-size:13.5px}
+.item.current{background:var(--field)}
+@media (max-width:720px){.item{grid-template-columns:52px minmax(0,1fr)}.item .fmt,.item .ops{grid-column:1/-1}}
+.empty{padding:28px 18px;color:var(--muted);text-align:center}
+.lib-foot{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--primary);color:var(--on-primary);padding:10px 16px;border-radius:8px;font-size:14px;opacity:0;pointer-events:none;transition:opacity .2s}
+.toast.show{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);padding:20px;width:min(520px,calc(100vw - 32px))}
+dialog::backdrop{background:rgba(0,0,0,.45)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <h1>SkanTuris</h1>
+    <p id="libSummary">No library file open</p>
+  </header>
+
+  <main class="studio">
+    <form class="panel editor" id="form" autocomplete="off" onsubmit="return false">
+      <div class="field">
+        <span class="legend">Cover art</span>
+        <label class="drop" id="drop" tabindex="0">
+          <span class="ph" id="coverPh"></span>
+          <img id="coverThumb" alt="" hidden>
+          <span><strong id="dropTitle">Add cover image</strong><span class="hint">Click, drop a file, or paste an image anywhere on the page. Square works best.</span></span>
+          <input type="file" id="coverInput" accept="image/*" class="sr">
+        </label>
+      </div>
+      <div class="field"><label for="artist">Artist</label><input type="text" id="artist" maxlength="80"></div>
+      <div class="field"><label for="title">Album title</label><input type="text" id="title" maxlength="100"></div>
+      <div class="row">
+        <div class="field"><label for="year">Year</label><input type="number" id="year" min="1900" max="2100" inputmode="numeric"></div>
+        <div class="field"><label for="tracks">Songs</label><input type="number" id="tracks" min="1" max="999" inputmode="numeric"></div>
+        <div class="field"><label for="minutes">Minutes</label><input type="number" id="minutes" min="1" max="999" inputmode="numeric"></div>
+      </div>
+      <div class="field">
+        <label for="link">Album link</label>
+        <input type="url" id="link" placeholder="Spotify, Apple Music, Tidal, YouTube Music…">
+        <span class="hint" id="linkHint">The QR code uses a clean link with tracking removed.</span>
+      </div>
+      <div class="field">
+        <label for="summary">Description</label>
+        <textarea id="summary" rows="4"></textarea>
+        <span class="hint"><span class="counter" id="count">0 / 140</span>. Genre, country and mood in one sentence. Type ~ inside a long word to let it hyphenate there.</span>
+      </div>
+      <div class="field">
+        <span class="legend">In my collection</span>
+        <div class="checks">
+          <label class="check"><input type="checkbox" id="fVinyl"> Vinyl</label>
+          <label class="check"><input type="checkbox" id="fCd"> CD</label>
+          <label class="check"><input type="checkbox" id="fServer"> Music server</label>
+        </div>
+      </div>
+      <details id="linksBox">
+        <summary>Tap-to-play links</summary>
+        <div class="row">
+          <div class="field"><label for="nfcUid">NFC tag UID</label><input type="text" id="nfcUid" placeholder="04:A2:…"></div>
+          <div class="field"><label for="serverId">Music server ID</label><input type="text" id="serverId" placeholder="Plex / Music Assistant"></div>
+        </div>
+      </details>
+      <div class="actions">
+        <button type="button" class="btn primary" id="saveBtn">Add to library</button>
+        <button type="button" class="btn" id="newBtn">New album</button>
+      </div>
+      <span class="hint" id="saveHint"></span>
+    </form>
+
+    <section class="stage" aria-label="Card preview">
+      <div class="cards">
+        <div class="card-slot tall">
+          <canvas id="cvTall" width="756" height="1134" aria-label="10 by 15 centimetre card preview"></canvas>
+          <span class="cap">10 × 15 cm</span>
+          <div class="dl">
+            <button type="button" class="btn" data-dl="tall-png">PNG</button>
+            <button type="button" class="btn" data-dl="tall-pdf">PDF</button>
+          </div>
+        </div>
+        <div class="card-slot wide">
+          <canvas id="cvWide" width="756" height="567" aria-label="10 by 7.5 centimetre card preview"></canvas>
+          <span class="cap">10 × 7.5 cm</span>
+          <div class="dl">
+            <button type="button" class="btn" data-dl="wide-png">PNG</button>
+            <button type="button" class="btn" data-dl="wide-pdf">PDF</button>
+          </div>
+        </div>
+      </div>
+      <div class="dl" style="flex-direction:column;align-items:center;gap:8px">
+        <div class="dl">
+          <button type="button" class="btn primary" id="ghSaveAlbum" hidden>Save album and cards to GitHub</button>
+          <button type="button" class="btn" data-dl="zip" id="zipBtn">Download files (.zip)</button>
+        </div>
+        <span class="hint" id="stageHint" style="text-align:center">library.csv, the artwork and both cards, in your library folder layout.</span>
+      </div>
+      <div class="theme" role="group" aria-labelledby="themeLbl">
+        <div class="theme-top">
+          <span class="legend" id="themeLbl">Card colour</span>
+          <span class="hint" id="autoNote">Add a cover to pick colours automatically.</span>
+        </div>
+        <div class="swatches" id="swatches"></div>
+        <div class="row" style="align-items:center;flex-wrap:wrap">
+          <div class="seg" role="radiogroup" aria-label="Brightness">
+            <label><input type="radio" name="mode" value="auto" checked>Auto</label>
+            <label><input type="radio" name="mode" value="light">Light</label>
+            <label><input type="radio" name="mode" value="dark">Dark</label>
+          </div>
+          <label class="check"><input type="checkbox" id="stripeOn" checked> Colour stripe on 10 × 7.5</label>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="library" aria-labelledby="libTitle">
+    <div class="lib-head">
+      <div>
+        <h2 id="libTitle">My music</h2>
+        <p class="hint" id="libFile" style="margin:4px 0 0">No library file open.</p>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn" id="ghReload" hidden>Reload</button>
+        <button type="button" class="btn" id="ghBtn">Connect GitHub</button>
+        <label class="btn" tabindex="0" id="openCsvBtn">Open library.csv<input type="file" id="csvInput" accept=".csv,text/csv" class="sr"></label>
+        <label class="btn" tabindex="0" id="openArtBtn">Add artwork folder<input type="file" id="artInput" webkitdirectory multiple class="sr"></label>
+      </div>
+    </div>
+    <div class="filters" style="margin-bottom:12px">
+      <input type="text" class="search" id="search" placeholder="Search artist or album" aria-label="Search library">
+      <button type="button" class="chipbtn" data-filter="all" aria-pressed="true">All</button>
+      <button type="button" class="chipbtn" data-filter="vinyl" aria-pressed="false">Vinyl</button>
+      <button type="button" class="chipbtn" data-filter="cd" aria-pressed="false">CD</button>
+      <button type="button" class="chipbtn" data-filter="server" aria-pressed="false">Music server</button>
+      <button type="button" class="chipbtn" data-filter="none" aria-pressed="false">Not owned</button>
+    </div>
+    <div class="list" id="list"></div>
+    <div class="lib-foot">
+      <span class="hint" id="libStatus"></span>
+      <div class="actions">
+        <button type="button" class="btn primary" id="ghSaveLib" hidden>Save library to GitHub</button>
+        <button type="button" class="btn" id="exportCsv">Download library.csv</button>
+      </div>
+    </div>
+  </section>
+</div>
+<dialog id="ghDlg" aria-labelledby="ghDlgTitle">
+  <form method="dialog" class="editor" id="ghForm" style="gap:12px">
+    <h2 id="ghDlgTitle" style="margin:0;font-size:18px">Connect to GitHub</h2>
+    <p class="hint" style="margin:0">The token stays in this browser on this device only. Create a fine-grained token limited to your library repository, with Contents set to read and write.</p>
+    <div class="row">
+      <div class="field"><label for="ghOwner">Owner</label><input type="text" id="ghOwner" value="kristaps194" autocapitalize="off" spellcheck="false"></div>
+      <div class="field"><label for="ghRepo">Repository</label><input type="text" id="ghRepo" value="SkanTuris" autocapitalize="off" spellcheck="false"></div>
+    </div>
+    <div class="row">
+      <div class="field" style="flex:0 0 110px"><label for="ghBranch">Branch</label><input type="text" id="ghBranch" value="main" autocapitalize="off" spellcheck="false"></div>
+      <div class="field"><label for="ghToken">Access token</label><input type="password" id="ghToken" autocomplete="off" placeholder="github_pat_…"></div>
+    </div>
+    <span class="hint" id="ghMsg"></span>
+    <div class="actions">
+      <button type="button" class="btn primary" id="ghConnect">Connect</button>
+      <button type="button" class="btn" id="ghCancel">Cancel</button>
+      <button type="button" class="btn danger" id="ghDisconnect" hidden>Disconnect this device</button>
+    </div>
+  </form>
+</dialog>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/* QR encoder: QRCode for JavaScript by Kazuhiko Arase (MIT), via qrcode-terminal */
+var QRLib=(function(){var M={},C={};function R(n){n=n.replace(/^\.\//,"").replace(/\.js$/,"");if(C[n])return C[n].exports;var m={exports:{}};C[n]=m;M[n](m,m.exports,R);return m.exports;}
+M["QR8bitByte"]=function(module,exports,require){
+var QRMode = require('./QRMode');
+
+function QR8bitByte(data) {
+	this.mode = QRMode.MODE_8BIT_BYTE;
+	this.data = data;
+}
+
+QR8bitByte.prototype = {
+
+	getLength : function() {
+		return this.data.length;
+	},
+	
+	write : function(buffer) {
+		for (var i = 0; i < this.data.length; i++) {
+			// not JIS ...
+			buffer.put(this.data.charCodeAt(i), 8);
+		}
+	}
+};
+
+module.exports = QR8bitByte;
+
+};
+M["QRBitBuffer"]=function(module,exports,require){
+function QRBitBuffer() {
+	this.buffer = [];
+	this.length = 0;
+}
+
+QRBitBuffer.prototype = {
+
+	get : function(index) {
+		var bufIndex = Math.floor(index / 8);
+		return ( (this.buffer[bufIndex] >>> (7 - index % 8) ) & 1) == 1;
+	},
+	
+	put : function(num, length) {
+		for (var i = 0; i < length; i++) {
+			this.putBit( ( (num >>> (length - i - 1) ) & 1) == 1);
+		}
+	},
+	
+	getLengthInBits : function() {
+		return this.length;
+	},
+	
+	putBit : function(bit) {
+	
+		var bufIndex = Math.floor(this.length / 8);
+		if (this.buffer.length <= bufIndex) {
+			this.buffer.push(0);
+		}
+	
+		if (bit) {
+			this.buffer[bufIndex] |= (0x80 >>> (this.length % 8) );
+		}
+	
+		this.length++;
+	}
+};
+
+module.exports = QRBitBuffer;
+
+};
+M["QRErrorCorrectLevel"]=function(module,exports,require){
+module.exports = {
+	L : 1,
+	M : 0,
+	Q : 3,
+	H : 2
+};
+
+
+};
+M["QRMaskPattern"]=function(module,exports,require){
+module.exports = {
+	PATTERN000 : 0,
+	PATTERN001 : 1,
+	PATTERN010 : 2,
+	PATTERN011 : 3,
+	PATTERN100 : 4,
+	PATTERN101 : 5,
+	PATTERN110 : 6,
+	PATTERN111 : 7
+};
+
+};
+M["QRMath"]=function(module,exports,require){
+var QRMath = {
+
+	glog : function(n) {
+	
+		if (n < 1) {
+			throw new Error("glog(" + n + ")");
+		}
+		
+		return QRMath.LOG_TABLE[n];
+	},
+	
+	gexp : function(n) {
+	
+		while (n < 0) {
+			n += 255;
+		}
+	
+		while (n >= 256) {
+			n -= 255;
+		}
+	
+		return QRMath.EXP_TABLE[n];
+	},
+	
+	EXP_TABLE : new Array(256),
+	
+	LOG_TABLE : new Array(256)
+
+};
+	
+for (var i = 0; i < 8; i++) {
+	QRMath.EXP_TABLE[i] = 1 << i;
+}
+for (var i = 8; i < 256; i++) {
+	QRMath.EXP_TABLE[i] = QRMath.EXP_TABLE[i - 4]
+		^ QRMath.EXP_TABLE[i - 5]
+		^ QRMath.EXP_TABLE[i - 6]
+		^ QRMath.EXP_TABLE[i - 8];
+}
+for (var i = 0; i < 255; i++) {
+	QRMath.LOG_TABLE[QRMath.EXP_TABLE[i] ] = i;
+}
+
+module.exports = QRMath;
+
+};
+M["QRMode"]=function(module,exports,require){
+module.exports = {
+    MODE_NUMBER :       1 << 0,
+    MODE_ALPHA_NUM :    1 << 1,
+    MODE_8BIT_BYTE :    1 << 2,
+    MODE_KANJI :        1 << 3
+};
+
+};
+M["QRPolynomial"]=function(module,exports,require){
+var QRMath = require('./QRMath');
+
+function QRPolynomial(num, shift) {
+	if (num.length === undefined) {
+		throw new Error(num.length + "/" + shift);
+	}
+
+	var offset = 0;
+
+	while (offset < num.length && num[offset] === 0) {
+		offset++;
+	}
+
+	this.num = new Array(num.length - offset + shift);
+	for (var i = 0; i < num.length - offset; i++) {
+		this.num[i] = num[i + offset];
+	}
+}
+
+QRPolynomial.prototype = {
+
+	get : function(index) {
+		return this.num[index];
+	},
+	
+	getLength : function() {
+		return this.num.length;
+	},
+	
+	multiply : function(e) {
+	
+		var num = new Array(this.getLength() + e.getLength() - 1);
+	
+		for (var i = 0; i < this.getLength(); i++) {
+			for (var j = 0; j < e.getLength(); j++) {
+				num[i + j] ^= QRMath.gexp(QRMath.glog(this.get(i) ) + QRMath.glog(e.get(j) ) );
+			}
+		}
+	
+		return new QRPolynomial(num, 0);
+	},
+	
+	mod : function(e) {
+	
+		if (this.getLength() - e.getLength() < 0) {
+			return this;
+		}
+	
+		var ratio = QRMath.glog(this.get(0) ) - QRMath.glog(e.get(0) );
+	
+		var num = new Array(this.getLength() );
+		
+		for (var i = 0; i < this.getLength(); i++) {
+			num[i] = this.get(i);
+		}
+		
+		for (var x = 0; x < e.getLength(); x++) {
+			num[x] ^= QRMath.gexp(QRMath.glog(e.get(x) ) + ratio);
+		}
+	
+		// recursive call
+		return new QRPolynomial(num, 0).mod(e);
+	}
+};
+
+module.exports = QRPolynomial;
+
+};
+M["QRRSBlock"]=function(module,exports,require){
+var QRErrorCorrectLevel = require('./QRErrorCorrectLevel');
+
+function QRRSBlock(totalCount, dataCount) {
+	this.totalCount = totalCount;
+	this.dataCount  = dataCount;
+}
+
+QRRSBlock.RS_BLOCK_TABLE = [
+
+	// L
+	// M
+	// Q
+	// H
+
+	// 1
+	[1, 26, 19],
+	[1, 26, 16],
+	[1, 26, 13],
+	[1, 26, 9],
+	
+	// 2
+	[1, 44, 34],
+	[1, 44, 28],
+	[1, 44, 22],
+	[1, 44, 16],
+
+	// 3
+	[1, 70, 55],
+	[1, 70, 44],
+	[2, 35, 17],
+	[2, 35, 13],
+
+	// 4		
+	[1, 100, 80],
+	[2, 50, 32],
+	[2, 50, 24],
+	[4, 25, 9],
+	
+	// 5
+	[1, 134, 108],
+	[2, 67, 43],
+	[2, 33, 15, 2, 34, 16],
+	[2, 33, 11, 2, 34, 12],
+	
+	// 6
+	[2, 86, 68],
+	[4, 43, 27],
+	[4, 43, 19],
+	[4, 43, 15],
+	
+	// 7		
+	[2, 98, 78],
+	[4, 49, 31],
+	[2, 32, 14, 4, 33, 15],
+	[4, 39, 13, 1, 40, 14],
+	
+	// 8
+	[2, 121, 97],
+	[2, 60, 38, 2, 61, 39],
+	[4, 40, 18, 2, 41, 19],
+	[4, 40, 14, 2, 41, 15],
+	
+	// 9
+	[2, 146, 116],
+	[3, 58, 36, 2, 59, 37],
+	[4, 36, 16, 4, 37, 17],
+	[4, 36, 12, 4, 37, 13],
+	
+	// 10		
+	[2, 86, 68, 2, 87, 69],
+	[4, 69, 43, 1, 70, 44],
+	[6, 43, 19, 2, 44, 20],
+	[6, 43, 15, 2, 44, 16],
+
+	// 11
+	[4, 101, 81],
+	[1, 80, 50, 4, 81, 51],
+	[4, 50, 22, 4, 51, 23],
+	[3, 36, 12, 8, 37, 13],
+
+	// 12
+	[2, 116, 92, 2, 117, 93],
+	[6, 58, 36, 2, 59, 37],
+	[4, 46, 20, 6, 47, 21],
+	[7, 42, 14, 4, 43, 15],
+
+	// 13
+	[4, 133, 107],
+	[8, 59, 37, 1, 60, 38],
+	[8, 44, 20, 4, 45, 21],
+	[12, 33, 11, 4, 34, 12],
+
+	// 14
+	[3, 145, 115, 1, 146, 116],
+	[4, 64, 40, 5, 65, 41],
+	[11, 36, 16, 5, 37, 17],
+	[11, 36, 12, 5, 37, 13],
+
+	// 15
+	[5, 109, 87, 1, 110, 88],
+	[5, 65, 41, 5, 66, 42],
+	[5, 54, 24, 7, 55, 25],
+	[11, 36, 12],
+
+	// 16
+	[5, 122, 98, 1, 123, 99],
+	[7, 73, 45, 3, 74, 46],
+	[15, 43, 19, 2, 44, 20],
+	[3, 45, 15, 13, 46, 16],
+
+	// 17
+	[1, 135, 107, 5, 136, 108],
+	[10, 74, 46, 1, 75, 47],
+	[1, 50, 22, 15, 51, 23],
+	[2, 42, 14, 17, 43, 15],
+
+	// 18
+	[5, 150, 120, 1, 151, 121],
+	[9, 69, 43, 4, 70, 44],
+	[17, 50, 22, 1, 51, 23],
+	[2, 42, 14, 19, 43, 15],
+
+	// 19
+	[3, 141, 113, 4, 142, 114],
+	[3, 70, 44, 11, 71, 45],
+	[17, 47, 21, 4, 48, 22],
+	[9, 39, 13, 16, 40, 14],
+
+	// 20
+	[3, 135, 107, 5, 136, 108],
+	[3, 67, 41, 13, 68, 42],
+	[15, 54, 24, 5, 55, 25],
+	[15, 43, 15, 10, 44, 16],
+
+	// 21
+	[4, 144, 116, 4, 145, 117],
+	[17, 68, 42],
+	[17, 50, 22, 6, 51, 23],
+	[19, 46, 16, 6, 47, 17],
+
+	// 22
+	[2, 139, 111, 7, 140, 112],
+	[17, 74, 46],
+	[7, 54, 24, 16, 55, 25],
+	[34, 37, 13],
+
+	// 23
+	[4, 151, 121, 5, 152, 122],
+	[4, 75, 47, 14, 76, 48],
+	[11, 54, 24, 14, 55, 25],
+	[16, 45, 15, 14, 46, 16],
+
+	// 24
+	[6, 147, 117, 4, 148, 118],
+	[6, 73, 45, 14, 74, 46],
+	[11, 54, 24, 16, 55, 25],
+	[30, 46, 16, 2, 47, 17],
+
+	// 25
+	[8, 132, 106, 4, 133, 107],
+	[8, 75, 47, 13, 76, 48],
+	[7, 54, 24, 22, 55, 25],
+	[22, 45, 15, 13, 46, 16],
+
+	// 26
+	[10, 142, 114, 2, 143, 115],
+	[19, 74, 46, 4, 75, 47],
+	[28, 50, 22, 6, 51, 23],
+	[33, 46, 16, 4, 47, 17],
+
+	// 27
+	[8, 152, 122, 4, 153, 123],
+	[22, 73, 45, 3, 74, 46],
+	[8, 53, 23, 26, 54, 24],
+	[12, 45, 15, 28, 46, 16],
+
+	// 28
+	[3, 147, 117, 10, 148, 118],
+	[3, 73, 45, 23, 74, 46],
+	[4, 54, 24, 31, 55, 25],
+	[11, 45, 15, 31, 46, 16],
+
+	// 29
+	[7, 146, 116, 7, 147, 117],
+	[21, 73, 45, 7, 74, 46],
+	[1, 53, 23, 37, 54, 24],
+	[19, 45, 15, 26, 46, 16],
+
+	// 30
+	[5, 145, 115, 10, 146, 116],
+	[19, 75, 47, 10, 76, 48],
+	[15, 54, 24, 25, 55, 25],
+	[23, 45, 15, 25, 46, 16],
+
+	// 31
+	[13, 145, 115, 3, 146, 116],
+	[2, 74, 46, 29, 75, 47],
+	[42, 54, 24, 1, 55, 25],
+	[23, 45, 15, 28, 46, 16],
+
+	// 32
+	[17, 145, 115],
+	[10, 74, 46, 23, 75, 47],
+	[10, 54, 24, 35, 55, 25],
+	[19, 45, 15, 35, 46, 16],
+
+	// 33
+	[17, 145, 115, 1, 146, 116],
+	[14, 74, 46, 21, 75, 47],
+	[29, 54, 24, 19, 55, 25],
+	[11, 45, 15, 46, 46, 16],
+
+	// 34
+	[13, 145, 115, 6, 146, 116],
+	[14, 74, 46, 23, 75, 47],
+	[44, 54, 24, 7, 55, 25],
+	[59, 46, 16, 1, 47, 17],
+
+	// 35
+	[12, 151, 121, 7, 152, 122],
+	[12, 75, 47, 26, 76, 48],
+	[39, 54, 24, 14, 55, 25],
+	[22, 45, 15, 41, 46, 16],
+
+	// 36
+	[6, 151, 121, 14, 152, 122],
+	[6, 75, 47, 34, 76, 48],
+	[46, 54, 24, 10, 55, 25],
+	[2, 45, 15, 64, 46, 16],
+
+	// 37
+	[17, 152, 122, 4, 153, 123],
+	[29, 74, 46, 14, 75, 47],
+	[49, 54, 24, 10, 55, 25],
+	[24, 45, 15, 46, 46, 16],
+
+	// 38
+	[4, 152, 122, 18, 153, 123],
+	[13, 74, 46, 32, 75, 47],
+	[48, 54, 24, 14, 55, 25],
+	[42, 45, 15, 32, 46, 16],
+
+	// 39
+	[20, 147, 117, 4, 148, 118],
+	[40, 75, 47, 7, 76, 48],
+	[43, 54, 24, 22, 55, 25],
+	[10, 45, 15, 67, 46, 16],
+
+	// 40
+	[19, 148, 118, 6, 149, 119],
+	[18, 75, 47, 31, 76, 48],
+	[34, 54, 24, 34, 55, 25],
+	[20, 45, 15, 61, 46, 16]
+];
+
+QRRSBlock.getRSBlocks = function(typeNumber, errorCorrectLevel) {
+	
+	var rsBlock = QRRSBlock.getRsBlockTable(typeNumber, errorCorrectLevel);
+	
+	if (rsBlock === undefined) {
+		throw new Error("bad rs block @ typeNumber:" + typeNumber + "/errorCorrectLevel:" + errorCorrectLevel);
+	}
+
+	var length = rsBlock.length / 3;
+	
+	var list = [];
+	
+	for (var i = 0; i < length; i++) {
+
+		var count = rsBlock[i * 3 + 0];
+		var totalCount = rsBlock[i * 3 + 1];
+		var dataCount  = rsBlock[i * 3 + 2];
+
+		for (var j = 0; j < count; j++) {
+			list.push(new QRRSBlock(totalCount, dataCount) );	
+		}
+	}
+	
+	return list;
+};
+
+QRRSBlock.getRsBlockTable = function(typeNumber, errorCorrectLevel) {
+
+	switch(errorCorrectLevel) {
+	case QRErrorCorrectLevel.L :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 0];
+	case QRErrorCorrectLevel.M :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 1];
+	case QRErrorCorrectLevel.Q :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 2];
+	case QRErrorCorrectLevel.H :
+		return QRRSBlock.RS_BLOCK_TABLE[(typeNumber - 1) * 4 + 3];
+	default :
+		return undefined;
+	}
+};
+
+module.exports = QRRSBlock;
+
+};
+M["QRUtil"]=function(module,exports,require){
+var QRMode = require('./QRMode');
+var QRPolynomial = require('./QRPolynomial');
+var QRMath = require('./QRMath');
+var QRMaskPattern = require('./QRMaskPattern');
+
+var QRUtil = {
+
+    PATTERN_POSITION_TABLE : [
+        [],
+        [6, 18],
+        [6, 22],
+        [6, 26],
+        [6, 30],
+        [6, 34],
+        [6, 22, 38],
+        [6, 24, 42],
+        [6, 26, 46],
+        [6, 28, 50],
+        [6, 30, 54],        
+        [6, 32, 58],
+        [6, 34, 62],
+        [6, 26, 46, 66],
+        [6, 26, 48, 70],
+        [6, 26, 50, 74],
+        [6, 30, 54, 78],
+        [6, 30, 56, 82],
+        [6, 30, 58, 86],
+        [6, 34, 62, 90],
+        [6, 28, 50, 72, 94],
+        [6, 26, 50, 74, 98],
+        [6, 30, 54, 78, 102],
+        [6, 28, 54, 80, 106],
+        [6, 32, 58, 84, 110],
+        [6, 30, 58, 86, 114],
+        [6, 34, 62, 90, 118],
+        [6, 26, 50, 74, 98, 122],
+        [6, 30, 54, 78, 102, 126],
+        [6, 26, 52, 78, 104, 130],
+        [6, 30, 56, 82, 108, 134],
+        [6, 34, 60, 86, 112, 138],
+        [6, 30, 58, 86, 114, 142],
+        [6, 34, 62, 90, 118, 146],
+        [6, 30, 54, 78, 102, 126, 150],
+        [6, 24, 50, 76, 102, 128, 154],
+        [6, 28, 54, 80, 106, 132, 158],
+        [6, 32, 58, 84, 110, 136, 162],
+        [6, 26, 54, 82, 110, 138, 166],
+        [6, 30, 58, 86, 114, 142, 170]
+    ],
+
+    G15 : (1 << 10) | (1 << 8) | (1 << 5) | (1 << 4) | (1 << 2) | (1 << 1) | (1 << 0),
+    G18 : (1 << 12) | (1 << 11) | (1 << 10) | (1 << 9) | (1 << 8) | (1 << 5) | (1 << 2) | (1 << 0),
+    G15_MASK : (1 << 14) | (1 << 12) | (1 << 10)    | (1 << 4) | (1 << 1),
+
+    getBCHTypeInfo : function(data) {
+        var d = data << 10;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) >= 0) {
+            d ^= (QRUtil.G15 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G15) ) );    
+        }
+        return ( (data << 10) | d) ^ QRUtil.G15_MASK;
+    },
+
+    getBCHTypeNumber : function(data) {
+        var d = data << 12;
+        while (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) >= 0) {
+            d ^= (QRUtil.G18 << (QRUtil.getBCHDigit(d) - QRUtil.getBCHDigit(QRUtil.G18) ) );    
+        }
+        return (data << 12) | d;
+    },
+
+    getBCHDigit : function(data) {
+
+        var digit = 0;
+
+        while (data !== 0) {
+            digit++;
+            data >>>= 1;
+        }
+
+        return digit;
+    },
+
+    getPatternPosition : function(typeNumber) {
+        return QRUtil.PATTERN_POSITION_TABLE[typeNumber - 1];
+    },
+
+    getMask : function(maskPattern, i, j) {
+        
+        switch (maskPattern) {
+            
+        case QRMaskPattern.PATTERN000 : return (i + j) % 2 === 0;
+        case QRMaskPattern.PATTERN001 : return i % 2 === 0;
+        case QRMaskPattern.PATTERN010 : return j % 3 === 0;
+        case QRMaskPattern.PATTERN011 : return (i + j) % 3 === 0;
+        case QRMaskPattern.PATTERN100 : return (Math.floor(i / 2) + Math.floor(j / 3) ) % 2 === 0;
+        case QRMaskPattern.PATTERN101 : return (i * j) % 2 + (i * j) % 3 === 0;
+        case QRMaskPattern.PATTERN110 : return ( (i * j) % 2 + (i * j) % 3) % 2 === 0;
+        case QRMaskPattern.PATTERN111 : return ( (i * j) % 3 + (i + j) % 2) % 2 === 0;
+
+        default :
+            throw new Error("bad maskPattern:" + maskPattern);
+        }
+    },
+
+    getErrorCorrectPolynomial : function(errorCorrectLength) {
+
+        var a = new QRPolynomial([1], 0);
+
+        for (var i = 0; i < errorCorrectLength; i++) {
+            a = a.multiply(new QRPolynomial([1, QRMath.gexp(i)], 0) );
+        }
+
+        return a;
+    },
+
+    getLengthInBits : function(mode, type) {
+
+        if (1 <= type && type < 10) {
+
+            // 1 - 9
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 10;
+            case QRMode.MODE_ALPHA_NUM  : return 9;
+            case QRMode.MODE_8BIT_BYTE  : return 8;
+            case QRMode.MODE_KANJI      : return 8;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 27) {
+
+            // 10 - 26
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 12;
+            case QRMode.MODE_ALPHA_NUM  : return 11;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 10;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else if (type < 41) {
+
+            // 27 - 40
+
+            switch(mode) {
+            case QRMode.MODE_NUMBER     : return 14;
+            case QRMode.MODE_ALPHA_NUM  : return 13;
+            case QRMode.MODE_8BIT_BYTE  : return 16;
+            case QRMode.MODE_KANJI      : return 12;
+            default :
+                throw new Error("mode:" + mode);
+            }
+
+        } else {
+            throw new Error("type:" + type);
+        }
+    },
+
+    getLostPoint : function(qrCode) {
+        
+        var moduleCount = qrCode.getModuleCount();
+        var lostPoint = 0;
+        var row = 0; 
+        var col = 0;
+
+        
+        // LEVEL1
+        
+        for (row = 0; row < moduleCount; row++) {
+
+            for (col = 0; col < moduleCount; col++) {
+
+                var sameCount = 0;
+                var dark = qrCode.isDark(row, col);
+
+                for (var r = -1; r <= 1; r++) {
+
+                    if (row + r < 0 || moduleCount <= row + r) {
+                        continue;
+                    }
+
+                    for (var c = -1; c <= 1; c++) {
+
+                        if (col + c < 0 || moduleCount <= col + c) {
+                            continue;
+                        }
+
+                        if (r === 0 && c === 0) {
+                            continue;
+                        }
+
+                        if (dark === qrCode.isDark(row + r, col + c) ) {
+                            sameCount++;
+                        }
+                    }
+                }
+
+                if (sameCount > 5) {
+                    lostPoint += (3 + sameCount - 5);
+                }
+            }
+        }
+
+        // LEVEL2
+
+        for (row = 0; row < moduleCount - 1; row++) {
+            for (col = 0; col < moduleCount - 1; col++) {
+                var count = 0;
+                if (qrCode.isDark(row,     col    ) ) count++;
+                if (qrCode.isDark(row + 1, col    ) ) count++;
+                if (qrCode.isDark(row,     col + 1) ) count++;
+                if (qrCode.isDark(row + 1, col + 1) ) count++;
+                if (count === 0 || count === 4) {
+                    lostPoint += 3;
+                }
+            }
+        }
+
+        // LEVEL3
+
+        for (row = 0; row < moduleCount; row++) {
+            for (col = 0; col < moduleCount - 6; col++) {
+                if (qrCode.isDark(row, col) && 
+                        !qrCode.isDark(row, col + 1) && 
+                         qrCode.isDark(row, col + 2) && 
+                         qrCode.isDark(row, col + 3) && 
+                         qrCode.isDark(row, col + 4) && 
+                        !qrCode.isDark(row, col + 5) && 
+                         qrCode.isDark(row, col + 6) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount - 6; row++) {
+                if (qrCode.isDark(row, col) &&
+                        !qrCode.isDark(row + 1, col) &&
+                         qrCode.isDark(row + 2, col) &&
+                         qrCode.isDark(row + 3, col) &&
+                         qrCode.isDark(row + 4, col) &&
+                        !qrCode.isDark(row + 5, col) &&
+                         qrCode.isDark(row + 6, col) ) {
+                    lostPoint += 40;
+                }
+            }
+        }
+
+        // LEVEL4
+        
+        var darkCount = 0;
+
+        for (col = 0; col < moduleCount; col++) {
+            for (row = 0; row < moduleCount; row++) {
+                if (qrCode.isDark(row, col) ) {
+                    darkCount++;
+                }
+            }
+        }
+        
+        var ratio = Math.abs(100 * darkCount / moduleCount / moduleCount - 50) / 5;
+        lostPoint += ratio * 10;
+
+        return lostPoint;       
+    }
+
+};
+
+module.exports = QRUtil;
+
+};
+M["index"]=function(module,exports,require){
+//---------------------------------------------------------------------
+// QRCode for JavaScript
+//
+// Copyright (c) 2009 Kazuhiko Arase
+//
+// URL: http://www.d-project.com/
+//
+// Licensed under the MIT license:
+//   http://www.opensource.org/licenses/mit-license.php
+//
+// The word "QR Code" is registered trademark of 
+// DENSO WAVE INCORPORATED
+//   http://www.denso-wave.com/qrcode/faqpatent-e.html
+//
+//---------------------------------------------------------------------
+// Modified to work in node for this project (and some refactoring)
+//---------------------------------------------------------------------
+
+var QR8bitByte = require('./QR8bitByte');
+var QRUtil = require('./QRUtil');
+var QRPolynomial = require('./QRPolynomial');
+var QRRSBlock = require('./QRRSBlock');
+var QRBitBuffer = require('./QRBitBuffer');
+
+function QRCode(typeNumber, errorCorrectLevel) {
+	this.typeNumber = typeNumber;
+	this.errorCorrectLevel = errorCorrectLevel;
+	this.modules = null;
+	this.moduleCount = 0;
+	this.dataCache = null;
+	this.dataList = [];
+}
+
+QRCode.prototype = {
+	
+	addData : function(data) {
+		var newData = new QR8bitByte(data);
+		this.dataList.push(newData);
+		this.dataCache = null;
+	},
+	
+	isDark : function(row, col) {
+		if (row < 0 || this.moduleCount <= row || col < 0 || this.moduleCount <= col) {
+			throw new Error(row + "," + col);
+		}
+		return this.modules[row][col];
+	},
+
+	getModuleCount : function() {
+		return this.moduleCount;
+	},
+	
+	make : function() {
+		// Calculate automatically typeNumber if provided is < 1
+		if (this.typeNumber < 1 ){
+			var typeNumber = 1;
+			for (typeNumber = 1; typeNumber < 40; typeNumber++) {
+				var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, this.errorCorrectLevel);
+
+				var buffer = new QRBitBuffer();
+				var totalDataCount = 0;
+				for (var i = 0; i < rsBlocks.length; i++) {
+					totalDataCount += rsBlocks[i].dataCount;
+				}
+
+				for (var x = 0; x < this.dataList.length; x++) {
+					var data = this.dataList[x];
+					buffer.put(data.mode, 4);
+					buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+					data.write(buffer);
+				}
+				if (buffer.getLengthInBits() <= totalDataCount * 8)
+					break;
+			}
+			this.typeNumber = typeNumber;
+		}
+		this.makeImpl(false, this.getBestMaskPattern() );
+	},
+	
+	makeImpl : function(test, maskPattern) {
+		
+		this.moduleCount = this.typeNumber * 4 + 17;
+		this.modules = new Array(this.moduleCount);
+		
+		for (var row = 0; row < this.moduleCount; row++) {
+			
+			this.modules[row] = new Array(this.moduleCount);
+			
+			for (var col = 0; col < this.moduleCount; col++) {
+				this.modules[row][col] = null;//(col + row) % 3;
+			}
+		}
+	
+		this.setupPositionProbePattern(0, 0);
+		this.setupPositionProbePattern(this.moduleCount - 7, 0);
+		this.setupPositionProbePattern(0, this.moduleCount - 7);
+		this.setupPositionAdjustPattern();
+		this.setupTimingPattern();
+		this.setupTypeInfo(test, maskPattern);
+		
+		if (this.typeNumber >= 7) {
+			this.setupTypeNumber(test);
+		}
+	
+		if (this.dataCache === null) {
+			this.dataCache = QRCode.createData(this.typeNumber, this.errorCorrectLevel, this.dataList);
+		}
+	
+		this.mapData(this.dataCache, maskPattern);
+	},
+
+	setupPositionProbePattern : function(row, col)  {
+		
+		for (var r = -1; r <= 7; r++) {
+			
+			if (row + r <= -1 || this.moduleCount <= row + r) continue;
+			
+			for (var c = -1; c <= 7; c++) {
+				
+				if (col + c <= -1 || this.moduleCount <= col + c) continue;
+				
+				if ( (0 <= r && r <= 6 && (c === 0 || c === 6) ) || 
+                     (0 <= c && c <= 6 && (r === 0 || r === 6) ) || 
+                     (2 <= r && r <= 4 && 2 <= c && c <= 4) ) {
+					this.modules[row + r][col + c] = true;
+				} else {
+					this.modules[row + r][col + c] = false;
+				}
+			}		
+		}		
+	},
+	
+	getBestMaskPattern : function() {
+	
+		var minLostPoint = 0;
+		var pattern = 0;
+	
+		for (var i = 0; i < 8; i++) {
+			
+			this.makeImpl(true, i);
+	
+			var lostPoint = QRUtil.getLostPoint(this);
+	
+			if (i === 0 || minLostPoint >  lostPoint) {
+				minLostPoint = lostPoint;
+				pattern = i;
+			}
+		}
+	
+		return pattern;
+	},
+	
+	createMovieClip : function(target_mc, instance_name, depth) {
+	
+		var qr_mc = target_mc.createEmptyMovieClip(instance_name, depth);
+		var cs = 1;
+	
+		this.make();
+
+		for (var row = 0; row < this.modules.length; row++) {
+			
+			var y = row * cs;
+			
+			for (var col = 0; col < this.modules[row].length; col++) {
+	
+				var x = col * cs;
+				var dark = this.modules[row][col];
+			
+				if (dark) {
+					qr_mc.beginFill(0, 100);
+					qr_mc.moveTo(x, y);
+					qr_mc.lineTo(x + cs, y);
+					qr_mc.lineTo(x + cs, y + cs);
+					qr_mc.lineTo(x, y + cs);
+					qr_mc.endFill();
+				}
+			}
+		}
+		
+		return qr_mc;
+	},
+
+	setupTimingPattern : function() {
+		
+		for (var r = 8; r < this.moduleCount - 8; r++) {
+			if (this.modules[r][6] !== null) {
+				continue;
+			}
+			this.modules[r][6] = (r % 2 === 0);
+		}
+	
+		for (var c = 8; c < this.moduleCount - 8; c++) {
+			if (this.modules[6][c] !== null) {
+				continue;
+			}
+			this.modules[6][c] = (c % 2 === 0);
+		}
+	},
+	
+	setupPositionAdjustPattern : function() {
+	
+		var pos = QRUtil.getPatternPosition(this.typeNumber);
+		
+		for (var i = 0; i < pos.length; i++) {
+		
+			for (var j = 0; j < pos.length; j++) {
+			
+				var row = pos[i];
+				var col = pos[j];
+				
+				if (this.modules[row][col] !== null) {
+					continue;
+				}
+				
+				for (var r = -2; r <= 2; r++) {
+				
+					for (var c = -2; c <= 2; c++) {
+					
+						if (Math.abs(r) === 2 || 
+                            Math.abs(c) === 2 ||
+                            (r === 0 && c === 0) ) {
+							this.modules[row + r][col + c] = true;
+						} else {
+							this.modules[row + r][col + c] = false;
+						}
+					}
+				}
+			}
+		}
+	},
+	
+	setupTypeNumber : function(test) {
+	
+		var bits = QRUtil.getBCHTypeNumber(this.typeNumber);
+        var mod;
+	
+		for (var i = 0; i < 18; i++) {
+			mod = (!test && ( (bits >> i) & 1) === 1);
+			this.modules[Math.floor(i / 3)][i % 3 + this.moduleCount - 8 - 3] = mod;
+		}
+	
+		for (var x = 0; x < 18; x++) {
+			mod = (!test && ( (bits >> x) & 1) === 1);
+			this.modules[x % 3 + this.moduleCount - 8 - 3][Math.floor(x / 3)] = mod;
+		}
+	},
+	
+	setupTypeInfo : function(test, maskPattern) {
+	
+		var data = (this.errorCorrectLevel << 3) | maskPattern;
+		var bits = QRUtil.getBCHTypeInfo(data);
+        var mod;
+	
+		// vertical		
+		for (var v = 0; v < 15; v++) {
+	
+			mod = (!test && ( (bits >> v) & 1) === 1);
+	
+			if (v < 6) {
+				this.modules[v][8] = mod;
+			} else if (v < 8) {
+				this.modules[v + 1][8] = mod;
+			} else {
+				this.modules[this.moduleCount - 15 + v][8] = mod;
+			}
+		}
+	
+		// horizontal
+		for (var h = 0; h < 15; h++) {
+	
+			mod = (!test && ( (bits >> h) & 1) === 1);
+			
+			if (h < 8) {
+				this.modules[8][this.moduleCount - h - 1] = mod;
+			} else if (h < 9) {
+				this.modules[8][15 - h - 1 + 1] = mod;
+			} else {
+				this.modules[8][15 - h - 1] = mod;
+			}
+		}
+	
+		// fixed module
+		this.modules[this.moduleCount - 8][8] = (!test);
+	
+	},
+	
+	mapData : function(data, maskPattern) {
+		
+		var inc = -1;
+		var row = this.moduleCount - 1;
+		var bitIndex = 7;
+		var byteIndex = 0;
+		
+		for (var col = this.moduleCount - 1; col > 0; col -= 2) {
+	
+			if (col === 6) col--;
+	
+			while (true) {
+	
+				for (var c = 0; c < 2; c++) {
+					
+					if (this.modules[row][col - c] === null) {
+						
+						var dark = false;
+	
+						if (byteIndex < data.length) {
+							dark = ( ( (data[byteIndex] >>> bitIndex) & 1) === 1);
+						}
+	
+						var mask = QRUtil.getMask(maskPattern, row, col - c);
+	
+						if (mask) {
+							dark = !dark;
+						}
+						
+						this.modules[row][col - c] = dark;
+						bitIndex--;
+	
+						if (bitIndex === -1) {
+							byteIndex++;
+							bitIndex = 7;
+						}
+					}
+				}
+								
+				row += inc;
+	
+				if (row < 0 || this.moduleCount <= row) {
+					row -= inc;
+					inc = -inc;
+					break;
+				}
+			}
+		}
+		
+	}
+
+};
+
+QRCode.PAD0 = 0xEC;
+QRCode.PAD1 = 0x11;
+
+QRCode.createData = function(typeNumber, errorCorrectLevel, dataList) {
+	
+	var rsBlocks = QRRSBlock.getRSBlocks(typeNumber, errorCorrectLevel);
+	
+	var buffer = new QRBitBuffer();
+	
+	for (var i = 0; i < dataList.length; i++) {
+		var data = dataList[i];
+		buffer.put(data.mode, 4);
+		buffer.put(data.getLength(), QRUtil.getLengthInBits(data.mode, typeNumber) );
+		data.write(buffer);
+	}
+
+	// calc num max data.
+	var totalDataCount = 0;
+	for (var x = 0; x < rsBlocks.length; x++) {
+		totalDataCount += rsBlocks[x].dataCount;
+	}
+
+	if (buffer.getLengthInBits() > totalDataCount * 8) {
+		throw new Error("code length overflow. (" + 
+            buffer.getLengthInBits() + 
+            ">" +  
+            totalDataCount * 8 + 
+            ")");
+	}
+
+	// end code
+	if (buffer.getLengthInBits() + 4 <= totalDataCount * 8) {
+		buffer.put(0, 4);
+	}
+
+	// padding
+	while (buffer.getLengthInBits() % 8 !== 0) {
+		buffer.putBit(false);
+	}
+
+	// padding
+	while (true) {
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD0, 8);
+		
+		if (buffer.getLengthInBits() >= totalDataCount * 8) {
+			break;
+		}
+		buffer.put(QRCode.PAD1, 8);
+	}
+
+	return QRCode.createBytes(buffer, rsBlocks);
+};
+
+QRCode.createBytes = function(buffer, rsBlocks) {
+
+	var offset = 0;
+	
+	var maxDcCount = 0;
+	var maxEcCount = 0;
+	
+	var dcdata = new Array(rsBlocks.length);
+	var ecdata = new Array(rsBlocks.length);
+	
+	for (var r = 0; r < rsBlocks.length; r++) {
+
+		var dcCount = rsBlocks[r].dataCount;
+		var ecCount = rsBlocks[r].totalCount - dcCount;
+
+		maxDcCount = Math.max(maxDcCount, dcCount);
+		maxEcCount = Math.max(maxEcCount, ecCount);
+		
+		dcdata[r] = new Array(dcCount);
+		
+		for (var i = 0; i < dcdata[r].length; i++) {
+			dcdata[r][i] = 0xff & buffer.buffer[i + offset];
+		}
+		offset += dcCount;
+		
+		var rsPoly = QRUtil.getErrorCorrectPolynomial(ecCount);
+		var rawPoly = new QRPolynomial(dcdata[r], rsPoly.getLength() - 1);
+
+		var modPoly = rawPoly.mod(rsPoly);
+		ecdata[r] = new Array(rsPoly.getLength() - 1);
+		for (var x = 0; x < ecdata[r].length; x++) {
+            var modIndex = x + modPoly.getLength() - ecdata[r].length;
+			ecdata[r][x] = (modIndex >= 0)? modPoly.get(modIndex) : 0;
+		}
+
+	}
+	
+	var totalCodeCount = 0;
+	for (var y = 0; y < rsBlocks.length; y++) {
+		totalCodeCount += rsBlocks[y].totalCount;
+	}
+
+	var data = new Array(totalCodeCount);
+	var index = 0;
+
+	for (var z = 0; z < maxDcCount; z++) {
+		for (var s = 0; s < rsBlocks.length; s++) {
+			if (z < dcdata[s].length) {
+				data[index++] = dcdata[s][z];
+			}
+		}
+	}
+
+	for (var xx = 0; xx < maxEcCount; xx++) {
+		for (var t = 0; t < rsBlocks.length; t++) {
+			if (xx < ecdata[t].length) {
+				data[index++] = ecdata[t][xx];
+			}
+		}
+	}
+
+	return data;
+
+};
+
+module.exports = QRCode;
+
+};
+return {QRCode:R("index"),ECL:R("QRErrorCorrectLevel")};})();
+</script>
+<script>
+(function(){
+'use strict';
+/* ---------- Palette: 5 families, each with a dark and a light card ---------- */
+const FAMILIES = {
+  graphite:{name:'Graphite', dark:{bg:'#1F1F1D',ink:'#ECE8E0'}, light:{bg:'#ECE8E0',ink:'#1F1F1D'}},
+  rust:    {name:'Rust',     dark:{bg:'#5B2618',ink:'#F4E4D8'}, light:{bg:'#F2DDD0',ink:'#4A1E12'}},
+  ochre:   {name:'Ochre',    dark:{bg:'#4B3F14',ink:'#F3EACB'}, light:{bg:'#F1E6C2',ink:'#3B3110'}},
+  moss:    {name:'Moss',     dark:{bg:'#213A2C',ink:'#E1ECE2'}, light:{bg:'#D9E7DA',ink:'#1B3024'}},
+  tide:    {name:'Tide',     dark:{bg:'#1B3048',ink:'#E0E9F3'}, light:{bg:'#D8E4F0',ink:'#172A40'}}
+};
+const LIMIT = 140;
+const K_EXPORT = 1200/378;             // 1200 px wide = ~305 dpi at 10 cm
+const TALL = {w:378, h:567};           // 10 x 15 cm in design units
+const WIDE = {w:378, h:283.5};         // 10 x 7.5 cm
+const $ = id => document.getElementById(id);
+
+/* ---------- State ---------- */
+const S = {
+  id:null, coverAsset:null, coverFile:null, img:null, analysis:null,
+  family:null /* null = auto */, mode:'auto', stripe:true,
+  albums:[], filter:'all', query:'', pendingArt:{}, artFiles:{}, dirtyLib:false, dirtyForm:false, fileName:'', extraCols:[]
+};
+let downloads=null;
+
+/* ---------- Helpers ---------- */
+function toast(msg){const t=$('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),2600);}
+function slug(s){return (s||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60)||'x';}
+function hexToRgb(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
+function rgbToHex(r,g,b){return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('');}
+function lin(c){c/=255;return c<=0.04045?c/12.92:Math.pow((c+0.055)/1.055,2.4);}
+function lstar(r,g,b){const Y=0.2126*lin(r)+0.7152*lin(g)+0.0722*lin(b);return Y>0.008856?116*Math.cbrt(Y)-16:903.3*Y;}
+function hsv(r,g,b){r/=255;g/=255;b/=255;const mx=Math.max(r,g,b),mn=Math.min(r,g,b),d=mx-mn;let h=0;
+  if(d){if(mx===r)h=((g-b)/d)%6;else if(mx===g)h=(b-r)/d+2;else h=(r-g)/d+4;h*=60;if(h<0)h+=360;}
+  return {h,s:mx?d/mx:0,v:mx};}
+function stripTilde(s){return (s||'').replace(/~/g,'').replace(/\u00AD/g,'');}
+
+/* ---------- Link cleaning ---------- */
+const PLATFORMS=[
+  [/(^|\.)spotify\.com$/,'Spotify'],[/^music\.apple\.com$/,'Apple Music'],[/(^|\.)tidal\.com$/,'Tidal'],
+  [/^music\.youtube\.com$/,'YouTube Music'],[/(^|\.)youtube\.com$|^youtu\.be$/,'YouTube'],[/(^|\.)deezer\.com$/,'Deezer'],
+  [/(^|\.)bandcamp\.com$/,'Bandcamp'],[/(^|\.)soundcloud\.com$/,'SoundCloud'],[/(^|\.)qobuz\.com$/,'Qobuz']
+];
+function cleanLink(raw){
+  raw=(raw||'').trim(); if(!raw) return {url:'',platform:'',changed:false};
+  let u; try{u=new URL(raw);}catch(e){return {url:raw,platform:'',changed:false,bad:true};}
+  const host=u.hostname.replace(/^www\./,'').toLowerCase();
+  let platform=''; for(const [re,name] of PLATFORMS){ if(re.test(host)){platform=name;break;} }
+  let out;
+  if(platform==='Spotify'){ out='https://'+host+u.pathname.replace(/^\/intl-[a-z-]+(?=\/)/i,''); }
+  else if(platform==='YouTube Music'||platform==='YouTube'){
+    const keep=new URLSearchParams(); for(const k of ['list','v']) if(u.searchParams.get(k)) keep.set(k,u.searchParams.get(k));
+    const q=keep.toString(); out='https://'+host+u.pathname+(q?'?'+q:'');
+  } else if(platform){ out='https://'+host+u.pathname; }
+  else {
+    const drop=/^(utm_.*|si|fbclid|gclid|dclid|igsh|igshid|mc_cid|mc_eid|ref|ref_src|feature|_branch.*|context)$/i;
+    [...u.searchParams.keys()].forEach(k=>{ if(drop.test(k)) u.searchParams.delete(k); });
+    u.hash=''; out=u.toString();
+  }
+  out=out.replace(/\/+$/,'');
+  return {url:out,platform,changed:out!==raw.replace(/\/+$/,'')};
+}
+
+/* ---------- QR ---------- */
+function qrMatrix(text){
+  if(!text) return null;
+  try{const q=new QRLib.QRCode(-1,QRLib.ECL.M);q.addData(text);q.make();const n=q.getModuleCount();const m=[];
+    for(let r=0;r<n;r++){const row=[];for(let c=0;c<n;c++)row.push(q.isDark(r,c));m.push(row);}return m;}
+  catch(e){return null;}
+}
+function drawQR(ctx,m,x,y,size,bg,ink){
+  if(!m){ // placeholder frame
+    ctx.save();ctx.strokeStyle=ink;ctx.globalAlpha=.35;ctx.lineWidth=1;ctx.setLineDash([3,3]);ctx.strokeRect(x+.5,y+.5,size-1,size-1);ctx.restore();return;}
+  const n=m.length,margin=2,u=size/(n+margin*2);
+  const lightCard=lstar(...hexToRgb(bg))>lstar(...hexToRgb(ink));
+  ctx.save();
+  if(lightCard){ctx.fillStyle=ink;} // dark modules straight on the light band, which is the quiet zone
+  else{ctx.globalAlpha=.8;ctx.fillStyle=ink;ctx.fillRect(x,y,size,size);ctx.globalAlpha=1;ctx.fillStyle=bg;}
+  for(let r=0;r<n;r++){let c=0;while(c<n){if(m[r][c]){let s=c;while(c<n&&m[r][c])c++;
+    ctx.fillRect(x+(s+margin)*u,y+(r+margin)*u,(c-s)*u+0.02,u+0.02);}else c++;}}
+  ctx.restore();
+}
+
+/* ---------- Cover analysis ---------- */
+function mulberry(a){return function(){a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function analyze(img){
+  const N=64,c=document.createElement('canvas');c.width=N;c.height=N;const x=c.getContext('2d',{willReadFrequently:true});
+  const s=Math.min(img.naturalWidth,img.naturalHeight);
+  x.drawImage(img,(img.naturalWidth-s)/2,(img.naturalHeight-s)/2,s,s,0,0,N,N);
+  const d=x.getImageData(0,0,N,N).data,px=[];let Lsum=0,colorful=0;const hist=new Array(36).fill(0);
+  for(let i=0;i<d.length;i+=4){const r=d[i],g=d[i+1],b=d[i+2];px.push([r,g,b]);Lsum+=lstar(r,g,b);
+    const h=hsv(r,g,b);if(h.s>=0.28&&h.v>=0.25){colorful++;hist[Math.floor(h.h/10)%36]+=h.s*h.v;}}
+  const meanL=Lsum/px.length,frac=colorful/px.length;
+  let family='graphite';
+  if(frac>=0.12){let best=0,bi=0;for(let i=0;i<36;i++){const v=hist[(i+35)%36]*.5+hist[i]+hist[(i+1)%36]*.5;if(v>best){best=v;bi=i;}}
+    const hue=bi*10+5; family=(hue>=330||hue<40)?'rust':hue<70?'ochre':hue<165?'moss':'tide';}
+  const mode=meanL>=58?'light':'dark';
+  // k-means for the stripe
+  const rnd=mulberry(7),K=7,cent=[px[Math.floor(rnd()*px.length)].slice()];
+  while(cent.length<K){let tot=0;const dist=px.map(p=>{let m=1e9;for(const q of cent){const dd=(p[0]-q[0])**2+(p[1]-q[1])**2+(p[2]-q[2])**2;if(dd<m)m=dd;}tot+=m;return m;});
+    let r=rnd()*tot,k=0;while(k<px.length-1&&(r-=dist[k])>0)k++;cent.push(px[k].slice());}
+  const lab=new Array(px.length).fill(0);
+  for(let it=0;it<12;it++){const sum=cent.map(()=>[0,0,0,0]);
+    px.forEach((p,i)=>{let m=1e9,bi=0;cent.forEach((q,j)=>{const dd=(p[0]-q[0])**2+(p[1]-q[1])**2+(p[2]-q[2])**2;if(dd<m){m=dd;bi=j;}});lab[i]=bi;const s2=sum[bi];s2[0]+=p[0];s2[1]+=p[1];s2[2]+=p[2];s2[3]++;});
+    sum.forEach((s2,j)=>{if(s2[3])cent[j]=[s2[0]/s2[3],s2[1]/s2[3],s2[2]/s2[3]];});}
+  const cnt=new Array(K).fill(0);lab.forEach(l=>cnt[l]++);
+  const clusters=cent.map((q,j)=>{const h=hsv(q[0],q[1],q[2]);return {rgb:q,n:cnt[j]/px.length,chroma:h.s*h.v,L:lstar(q[0],q[1],q[2]),h:h.h};}).filter(c=>c.n>0.004);
+  return {family,mode,meanL,frac,clusters};
+}
+function stripeColours(an,bg){
+  if(!an) return null;
+  const b=hexToRgb(bg);
+  let cl=an.clusters.slice().sort((p,q)=>((p.rgb[0]-b[0])**2+(p.rgb[1]-b[1])**2+(p.rgb[2]-b[2])**2)-((q.rgb[0]-b[0])**2+(q.rgb[1]-b[1])**2+(q.rgb[2]-b[2])**2));
+  cl=cl.slice(1); // drop the one closest to the band itself
+  cl.sort((p,q)=>q.n*(1+5*q.chroma)-p.n*(1+5*p.chroma)); cl=cl.slice(0,5);
+  const neutral=cl.filter(c=>c.chroma<0.18).sort((p,q)=>p.L-q.L), vivid=cl.filter(c=>c.chroma>=0.18).sort((p,q)=>p.chroma-q.chroma);
+  return neutral.concat(vivid).map(c=>rgbToHex(c.rgb[0],c.rgb[1],c.rgb[2]));
+}
+function currentTheme(){
+  const fam=S.family||(S.analysis?S.analysis.family:'graphite');
+  const mode=S.mode!=='auto'?S.mode:(S.analysis?S.analysis.mode:'dark');
+  return {family:fam,mode,...FAMILIES[fam][mode]};
+}
+
+/* ---------- Text layout: balanced, justified, optional hyphens ---------- */
+const FONT='"Courier Prime","Courier New",Courier,monospace';
+function setFont(ctx,size,weight,italic){ctx.font=(italic?'italic ':'')+(weight||400)+' '+size+'px '+FONT;}
+function layout(ctx,text,W){
+  const words=(text||'').replace(/\u00AD/g,'~').trim().split(/\s+/).filter(Boolean);
+  const P=[];words.forEach(w=>{const syl=[];w.split('~').filter(s=>s.length).forEach(s=>s.split(/(?<=[^-]-)(?=[^-])/).forEach((x,k,arr)=>syl.push({t:x,hard:k<arr.length-1})));
+    syl.forEach((s,i)=>P.push({t:s.t,hard:s.hard,end:i===syl.length-1}));});
+  const n=P.length;if(!n)return Object.assign([],{cost:0});
+  const sp=ctx.measureText(' ').width,hy=ctx.measureText('-').width;
+  const memo=new Array(n+1);memo[n]={cost:0,lines:[]};
+  for(let i=n-1;i>=0;i--){
+    let best=null,cur='',ws=[];
+    for(let j=i;j<n;j++){
+      cur+=P[j].t;
+      const isEnd=P[j].end, last=(j===n-1);
+      const lineWords=ws.concat([cur+(isEnd||P[j].hard?'':'-')]);
+      const w=lineWords.reduce((a,x)=>a+ctx.measureText(x).width,0)+sp*(lineWords.length-1);
+      if(w>W+0.5&&j>i){break;}
+      if(isEnd||!last){
+        const slack=Math.max(0,W-w)/sp;
+        let c;
+        if(last) c=slack*slack*1.2;
+        else { c=slack*slack*3; if(lineWords.length===1) c+=slack*slack*6; if(!isEnd) c+=P[j].hard?2:6; }
+        if(w>W+0.5) c+=1e6;
+        const rest=memo[j+1];
+        if(rest){const tot=c+rest.cost;if(!best||tot<best.cost)best={cost:tot,lines:[{words:lineWords,w}].concat(rest.lines)};}
+      }
+      if(isEnd){ws=ws.concat([cur]);cur='';}
+    }
+    memo[i]=best||{cost:1e9,lines:[{words:[P.slice(i).map(p=>p.t).join('')],w:W}]};
+  }
+  return Object.assign(memo[0].lines.slice(),{cost:memo[0].cost});
+}
+// try nearby font sizes and keep the one whose lines fill best
+function fitBlock(ctx,text,W,maxH,base,lo,hi,lhf){
+  let best=null;
+  for(let fs=hi;fs>=lo-1e-6;fs-=0.25){setFont(ctx,fs,400);const lines=layout(ctx,text,W),lh=fs*lhf;
+    if(lines.length*lh>maxH)continue;const c=lines.cost+25*(fs-base)*(fs-base);
+    if(!best||c<best.c)best={c,fs,lines,lh};}
+  if(!best){setFont(ctx,lo,400);best={fs:lo,lines:layout(ctx,text,W),lh:lo*lhf};}
+  setFont(ctx,best.fs,400);return best;
+}
+function drawBlock(ctx,lines,x,y,W,lh,ink){
+  ctx.fillStyle=ink;ctx.textBaseline='middle';
+  lines.forEach((ln,i)=>{
+    const cy=y+i*lh+lh/2,last=i===lines.length-1;
+    const widths=ln.words.map(w=>ctx.measureText(w).width),sum=widths.reduce((a,b)=>a+b,0);
+    const justify=ln.words.length>1&&(!last||ln.w/W>=0.82);
+    const gap=justify?(W-sum)/(ln.words.length-1):ctx.measureText(' ').width;
+    let cx=x;ln.words.forEach((w,k)=>{ctx.fillText(w,cx,cy);cx+=widths[k]+gap;});
+  });
+}
+function fitSize(ctx,text,size,min,weight,italic,maxW){
+  let s=size;setFont(ctx,s,weight,italic);
+  while(s>min&&ctx.measureText(text).width>maxW){s-=0.5;setFont(ctx,s,weight,italic);}
+  return s;
+}
+function ellipsize(ctx,text,maxW){if(ctx.measureText(text).width<=maxW)return text;let t=text;while(t.length>1&&ctx.measureText(t+'…').width>maxW)t=t.slice(0,-1);return t.trimEnd()+'…';}
+function drawCover(ctx,img,x,y,s,ink){
+  if(img){const n=Math.min(img.naturalWidth,img.naturalHeight);ctx.drawImage(img,(img.naturalWidth-n)/2,(img.naturalHeight-n)/2,n,n,x,y,s,s);return;}
+  ctx.save();ctx.fillStyle=ink;ctx.globalAlpha=.08;ctx.fillRect(x,y,s,s);ctx.globalAlpha=.55;setFont(ctx,14,400);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('Cover art',x+s/2,y+s/2);ctx.restore();
+}
+function drawStripe(ctx,cols,x,y,w,h){if(!cols||!cols.length)return;const sw=w/cols.length;cols.forEach((c,i)=>{ctx.fillStyle=c;ctx.fillRect(x+i*sw,y,sw+0.3,h);});}
+
+function cardData(){
+  const th=currentTheme(),clean=cleanLink($('link').value);
+  const tracks=parseInt($('tracks').value,10),mins=parseInt($('minutes').value,10),meta=[];
+  if(tracks>0)meta.push(tracks+(tracks===1?' song':' songs'));
+  if(mins>0)meta.push(mins+' min');
+  if(clean.platform)meta.push(clean.platform);
+  return {artist:$('artist').value.trim()||'Artist',title:$('title').value.trim()||'Album title',year:$('year').value.trim(),
+    summary:$('summary').value,meta,qr:qrMatrix(clean.url),img:S.img,theme:th,
+    stripe:S.stripe?(stripeColours(S.analysis,th.bg)):null};
+}
+
+function drawTall(ctx,d){
+  const {bg,ink}=d.theme,W=TALL.w;
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,TALL.h);ctx.textAlign='left';
+  // meta column (top right)
+  let titleMax=W-40;
+  if(d.meta.length){
+    setFont(ctx,11,400);const mw=Math.max(...d.meta.map(m=>ctx.measureText(m).width));
+    const mx=W-20-mw,hx=mx-10;
+    ctx.save();ctx.globalAlpha=.3;ctx.fillStyle=ink;ctx.fillRect(hx-1,14,1,66);ctx.restore();
+    ctx.save();ctx.globalAlpha=.7;ctx.fillStyle=ink;ctx.textBaseline='middle';
+    const n=d.meta.length,lh=13.2,span=62,gap=n>1?(span-n*lh)/(n-1):0;
+    d.meta.forEach((m,i)=>ctx.fillText(m,mx,17+i*(lh+gap)+lh/2));ctx.restore();
+    titleMax=hx-1-14-20;
+  }
+  ctx.fillStyle=ink;ctx.textBaseline='middle';
+  let s=fitSize(ctx,d.artist,20,12,700,false,titleMax);ctx.fillText(ellipsize(ctx,d.artist,titleMax),20,14+11.5);
+  s=fitSize(ctx,d.title,20,12,700,true,titleMax);ctx.fillText(ellipsize(ctx,d.title,titleMax),20,41+11.5);
+  if(d.year){setFont(ctx,12,400);ctx.fillText('('+d.year+')',20,68+7.2);}
+  const coverY=94;
+  drawCover(ctx,d.img,0,coverY,W,ink);
+  // bottom band
+  const y0=coverY+W,bh=TALL.h-y0,q=83,qx=W-5-q,qy=y0+(bh-q)/2;
+  drawQR(ctx,d.qr,qx,qy,q,bg,ink);
+  const tw=qx-12-20,fb=fitBlock(ctx,d.summary,tw,bh-12,12,10.5,13,1.22);
+  drawBlock(ctx,fb.lines,20,y0+(bh-fb.lines.length*fb.lh)/2,tw,fb.lh,ink);
+}
+
+function drawWide(ctx,d){
+  const {bg,ink}=d.theme,W=WIDE.w,H=WIDE.h,cs=227,hh=H-cs-(d.stripe?4:0);
+  ctx.fillStyle=bg;ctx.fillRect(0,0,W,H);ctx.textAlign='left';ctx.fillStyle=ink;
+  const lh=18.7,top=(hh-(lh*2+2))/2;
+  ctx.textBaseline='alphabetic';
+  fitSize(ctx,d.artist,17,11,700,false,W-28);ctx.fillText(ellipsize(ctx,d.artist,W-28),14,top+lh*0.76);
+  let yw=0;const yr=d.year?'('+d.year+')':'';
+  if(yr){setFont(ctx,11,400);yw=ctx.measureText(yr).width+8;}
+  fitSize(ctx,d.title,17,11,700,true,W-28-yw);const tt=ellipsize(ctx,d.title,W-28-yw);ctx.fillText(tt,14,top+lh+2+lh*0.76);
+  const ttw=ctx.measureText(tt).width;
+  if(yr){setFont(ctx,11,400);ctx.fillText(yr,14+ttw+8,top+lh+2+lh*0.76);}
+  if(d.stripe)drawStripe(ctx,d.stripe,0,hh,W,4);
+  const cy=H-cs;drawCover(ctx,d.img,0,cy,cs,ink);
+  // right column
+  const pad=12,x=cs+pad,w=W-cs-pad*2,yt=cy+pad,yb=H-pad,q=64;
+  drawQR(ctx,d.qr,x+w-q,yb-q,q,bg,ink);
+  const hlY=yb-q-10;
+  ctx.save();ctx.globalAlpha=.25;ctx.fillStyle=ink;ctx.fillRect(x,hlY-1,w,1);ctx.restore();
+  if(d.meta.length){ctx.save();ctx.globalAlpha=.7;ctx.fillStyle=ink;setFont(ctx,11,400);ctx.textBaseline='middle';
+    const mlh=13.2,n=d.meta.length;d.meta.forEach((m,i)=>ctx.fillText(ellipsize(ctx,m,w-q-8),x,yb-(n-i)*mlh-(n-1-i)*2+mlh/2));ctx.restore();}
+  const fb=fitBlock(ctx,d.summary,w,hlY-8-yt,11,9.5,12,1.2);
+  drawBlock(ctx,fb.lines,x,yt,w,fb.lh,ink);
+}
+
+function renderTo(canvas,kind,k,d){
+  const ctx=canvas.getContext('2d');ctx.setTransform(1,0,0,1,0,0);ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.setTransform(k,0,0,k,0,0);(kind==='tall'?drawTall:drawWide)(ctx,d);
+}
+let raf=0;
+function render(){cancelAnimationFrame(raf);raf=requestAnimationFrame(()=>{const d=cardData();renderTo($('cvTall'),'tall',2,d);renderTo($('cvWide'),'wide',2,d);updateThemeUI();});}
+
+/* ---------- Exports ---------- */
+function exportCanvas(kind){const c=document.createElement('canvas');c.width=1200;c.height=kind==='tall'?1800:900;renderTo(c,kind,K_EXPORT,cardData());return c;}
+function toBlob(c,type,q){return new Promise(r=>c.toBlob(r,type,q));}
+async function pdfBlob(kind){
+  const c=exportCanvas(kind),jpg=new Uint8Array(await (await toBlob(c,'image/jpeg',0.95)).arrayBuffer());
+  const pt=mm=>(mm*72/25.4).toFixed(3),Wp=pt(100),Hp=pt(kind==='tall'?150:75);
+  const enc=new TextEncoder(),chunks=[],offs=[];let len=0;
+  const put=x=>{const b=typeof x==='string'?enc.encode(x):x;chunks.push(b);len+=b.length;};
+  put('%PDF-1.4\n');put(new Uint8Array([37,226,227,207,211,10]));
+  const obj=(n,body)=>{offs[n]=len;put(n+' 0 obj\n');if(typeof body==='string')put(body);else body();put('\nendobj\n');};
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,'<< /Type /Pages /Kids [3 0 R] /Count 1 >>');
+  obj(3,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+Wp+' '+Hp+'] /TrimBox [0 0 '+Wp+' '+Hp+'] /Resources << /XObject << /Im0 5 0 R >> >> /Contents 4 0 R >>');
+  const content='q '+Wp+' 0 0 '+Hp+' 0 0 cm /Im0 Do Q';
+  obj(4,'<< /Length '+content.length+' >>\nstream\n'+content+'\nendstream');
+  obj(5,()=>{put('<< /Type /XObject /Subtype /Image /Width '+c.width+' /Height '+c.height+' /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length '+jpg.length+' >>\nstream\n');put(jpg);put('\nendstream');});
+  const xref=len;let x='xref\n0 6\n0000000000 65535 f \n';for(let i=1;i<=5;i++)x+=String(offs[i]).padStart(10,'0')+' 00000 n \n';
+  put(x+'trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n'+xref+'\n%%EOF\n');
+  return new Blob(chunks,{type:'application/pdf'});
+}
+async function pngBlob(kind){return toBlob(exportCanvas(kind),'image/png');}
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0;}return t;})();
+function crc32(b){let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=CRC[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0;}
+async function zipBlob(files){
+  const enc=new TextEncoder(),parts=[],central=[];let off=0;const d=new Date();
+  const dt=((d.getHours()<<11)|(d.getMinutes()<<5)|(d.getSeconds()>>1))&0xFFFF,dd=(((d.getFullYear()-1980)<<9)|((d.getMonth()+1)<<5)|d.getDate())&0xFFFF;
+  for(const f of files){
+    const data=new Uint8Array(await f.blob.arrayBuffer()),name=enc.encode(f.name),crc=crc32(data);
+    const h=new DataView(new ArrayBuffer(30));h.setUint32(0,0x04034b50,true);h.setUint16(4,20,true);h.setUint16(6,0,true);h.setUint16(8,0,true);
+    h.setUint16(10,dt,true);h.setUint16(12,dd,true);h.setUint32(14,crc,true);h.setUint32(18,data.length,true);h.setUint32(22,data.length,true);h.setUint16(26,name.length,true);h.setUint16(28,0,true);
+    parts.push(new Uint8Array(h.buffer),name,data);
+    const c=new DataView(new ArrayBuffer(46));c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0,true);c.setUint16(10,0,true);
+    c.setUint16(12,dt,true);c.setUint16(14,dd,true);c.setUint32(16,crc,true);c.setUint32(20,data.length,true);c.setUint32(24,data.length,true);c.setUint16(28,name.length,true);
+    c.setUint16(30,0,true);c.setUint16(32,0,true);c.setUint16(34,0,true);c.setUint16(36,0,true);c.setUint32(38,0,true);c.setUint32(42,off,true);
+    central.push(new Uint8Array(c.buffer),name);off+=30+name.length+data.length;
+  }
+  const cs=central.reduce((a,b)=>a+b.length,0),e=new DataView(new ArrayBuffer(22));
+  e.setUint32(0,0x06054b50,true);e.setUint16(8,files.length,true);e.setUint16(10,files.length,true);e.setUint32(12,cs,true);e.setUint32(16,off,true);
+  return new Blob(parts.concat(central,[new Uint8Array(e.buffer)]),{type:'application/zip'});
+}
+function baseName(){return S.id||(slug($('artist').value)+'--'+slug($('title').value));}
+async function save(filename,blob){
+  if(!(blob instanceof Blob))blob=new Blob([blob],{type:'text/plain'});
+  if(downloads){
+    try{await downloads.save({filename,data:blob});return true;}
+    catch(e){if(e&&e.code==='declined')return false;toast(e&&e.code==='rate_limited'?'Finish the open download first':'Couldn\u2019t save the file');return false;}
+  }
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=filename;document.body.append(a);a.click();
+  setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},4000);return true;
+}
+async function albumFiles(){
+  const id=baseName(),files=[{path:'library.csv',blob:new Blob([libraryCsv()],{type:'text/csv'})}];
+  Object.entries(S.pendingArt).forEach(([k,v])=>files.push({path:'artwork/'+k+'.'+v.ext,blob:v.blob}));
+  files.push({path:'cards 10x15/'+id+'.png',blob:await pngBlob('tall')},{path:'cards 10x15/'+id+'.pdf',blob:await pdfBlob('tall')},
+    {path:'cards 10x7.5/'+id+'.png',blob:await pngBlob('wide')},{path:'cards 10x7.5/'+id+'.pdf',blob:await pdfBlob('wide')});
+  return files;
+}
+async function doDownload(which){
+  const b=baseName();
+  if(which==='tall-png')return save(b+'_10x15.png',await pngBlob('tall'));
+  if(which==='tall-pdf')return save(b+'_10x15.pdf',await pdfBlob('tall'));
+  if(which==='wide-png')return save(b+'_10x7.5.png',await pngBlob('wide'));
+  if(which==='wide-pdf')return save(b+'_10x7.5.pdf',await pdfBlob('wide'));
+  if(which==='zip'){
+    if(!$('artist').value.trim()||!$('title').value.trim()){toast('Add the artist and album title first');return;}
+    if((!S.id||S.dirtyForm)&&!addOrUpdate(true))return;
+    const files=await albumFiles(),z=await zipBlob(files.map(f=>({name:f.path,blob:f.blob})));
+    if(await save('skanturis-update_'+baseName()+'.zip',z)){S.pendingArt={};S.dirtyLib=false;S.exported=true;libStatus();toast('Unzip it into your library folder');}
+  }
+}
+
+/* ---------- Theme UI ---------- */
+function buildSwatches(){
+  const box=$('swatches');box.innerHTML='';
+  const mk=(val,label,left,right)=>{const l=document.createElement('label');l.className='sw';
+    const i=document.createElement('input');i.type='radio';i.name='fam';i.value=val;
+    const chip=document.createElement('span');chip.className='chip';
+    const a=document.createElement('span');a.style.background=left;const b=document.createElement('span');b.style.background=right;chip.append(a,b);
+    const t=document.createElement('span');t.textContent=label;l.append(i,chip,t);box.append(l);
+    i.addEventListener('change',()=>{S.family=val==='auto'?null:val;formChanged();render();});
+    if(val==='auto')l.id='autoSw';};
+  mk('auto','Auto','#1F1F1D','#ECE8E0');
+  Object.entries(FAMILIES).forEach(([k,f])=>mk(k,f.name,f.dark.bg,f.light.bg));
+}
+function updateThemeUI(){
+  const note=$('autoNote');
+  if(S.analysis){const f=FAMILIES[S.analysis.family];note.textContent='Auto picks '+f.name+', '+S.analysis.mode+' for this cover.';
+    const sw=$('autoSw');if(sw){const sp=sw.querySelectorAll('.chip span');sp[0].style.background=f.dark.bg;sp[1].style.background=f.light.bg;}}
+  else note.textContent='Add a cover to pick colours automatically.';
+  document.querySelectorAll('input[name=fam]').forEach(i=>i.checked=(i.value==='auto'&&!S.family)||i.value===S.family);
+  document.querySelectorAll('input[name=mode]').forEach(i=>i.checked=i.value===S.mode);
+  $('stripeOn').checked=S.stripe;
+}
+
+/* ---------- CSV: the library file ---------- */
+const COLS=['id','artist','title','year','vinyl','cd','server','songs','minutes','link','description','card_style','nfc_uid','server_id'];
+function parseCsv(text){
+  text=text.replace(/^\uFEFF/,'');const rows=[];let row=[],f='',q=false;
+  for(let i=0;i<text.length;i++){const c=text[i];
+    if(q){if(c==='"'){if(text[i+1]==='"'){f+='"';i++;}else q=false;}else f+=c;}
+    else if(c==='"')q=true;else if(c===','){row.push(f);f='';}
+    else if(c==='\n'||c==='\r'){if(c==='\r'&&text[i+1]==='\n')i++;row.push(f);f='';if(row.some(x=>x!==''))rows.push(row);row=[];}
+    else f+=c;}
+  row.push(f);if(row.some(x=>x!==''))rows.push(row);return rows;
+}
+function csvCell(v){v=v==null?'':String(v);return /[",\n\r]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v;}
+const yes=v=>/^(yes|y|true|1|x|✓)$/i.test(String(v||'').trim());
+function parseStyle(s){s=(s||'').toLowerCase();const fam=Object.keys(FAMILIES).find(k=>s.includes(k))||null;
+  const mode=/\blight\b/.test(s)?'light':/\bdark\b/.test(s)?'dark':'auto';return {family:fam,mode,stripe:!/no[\s-]*stripe/.test(s)};}
+function styleText(a){const p=[];if(a.family)p.push(a.family);if(a.mode&&a.mode!=='auto')p.push(a.mode);if(!p.length)p.push('auto');let t=p.join(' ');if(a.stripe===false)t+=', no stripe';return t;}
+function parseLibrary(text){
+  const rows=parseCsv(text||'');if(!rows.length)return {albums:[],extraCols:[]};
+  const head=rows[0].map(h=>h.trim().toLowerCase().replace(/\s+/g,'_'));
+  if(!head.includes('artist')||!head.includes('title'))throw new Error('The file needs artist and title columns');
+  const extraCols=head.filter(h=>h&&!COLS.includes(h));
+  const albums=rows.slice(1).map(r=>{const o={};head.forEach((h,i)=>o[h]=(r[i]||'').trim());
+    const st=parseStyle(o.card_style);
+    const a={id:o.id||(slug(o.artist)+'--'+slug(o.title)),artist:o.artist,title:o.title,year:o.year,
+      formats:{vinyl:yes(o.vinyl),cd:yes(o.cd),server:yes(o.server)},songs:o.songs,minutes:o.minutes,link:o.link,description:o.description,
+      family:st.family,mode:st.mode,stripe:st.stripe,nfcUid:o.nfc_uid,serverId:o.server_id,extra:{}};
+    extraCols.forEach(h=>a.extra[h]=o[h]);return a;}).filter(a=>a.artist||a.title);
+  return {albums,extraCols};
+}
+function loadCsv(text,name){
+  let lib;try{lib=parseLibrary(text);}catch(e){toast(e.message);return;}
+  S.albums=lib.albums;S.extraCols=lib.extraCols;S.changed=new Set();S.removed=new Set();
+  S.fileName=name||'library.csv';S.dirtyLib=false;S.exported=false;libStatus();renderLib();
+  toast('Opened '+S.albums.length+(S.albums.length===1?' album':' albums'));
+}
+function libraryCsv(){
+  const head=COLS.concat(S.extraCols);
+  const rows=S.albums.slice().sort((a,b)=>(a.artist||'').localeCompare(b.artist||'',undefined,{sensitivity:'base'})||String(a.year||'').localeCompare(String(b.year||''))||(a.title||'').localeCompare(b.title||''))
+    .map(a=>{const v={id:a.id,artist:a.artist,title:a.title,year:a.year,vinyl:a.formats.vinyl?'yes':'',cd:a.formats.cd?'yes':'',server:a.formats.server?'yes':'',
+      songs:a.songs,minutes:a.minutes,link:a.link,description:a.description,card_style:styleText(a),nfc_uid:a.nfcUid,server_id:a.serverId};
+      return head.map(h=>csvCell(h in v?v[h]:(a.extra||{})[h])).join(',');});
+  return '\uFEFF'+[head.join(',')].concat(rows).join('\r\n')+'\r\n';
+}
+function libStatus(){
+  const a=S.albums,c=k=>a.filter(x=>x.formats[k]).length;
+  $('libSummary').textContent=a.length?(a.length+(a.length===1?' album':' albums')+': '+c('vinyl')+' on vinyl, '+c('cd')+' on CD, '+c('server')+' on the music server'):(S.fileName?'Library is empty':'No library file open');
+  $('libFile').textContent=GH.cfg?('Connected to '+GH.cfg.owner+'/'+GH.cfg.repo+' ('+GH.cfg.branch+').'):(S.fileName?('Working on '+S.fileName+(Object.keys(S.artFiles).length?', with '+Object.keys(S.artFiles).length+' artwork files':'')+'.'):'Connect GitHub, or open library.csv and your artwork folder from a local copy.');
+  const st=$('libStatus');st.className='hint';
+  if(S.dirtyLib){st.textContent=GH.cfg?'Unsaved changes. Choose Save library to GitHub.':'Changes aren\u2019t saved yet. Download the files or library.csv, then replace them in your folder.';st.classList.add('warn');}
+  else st.textContent=GH.cfg?(GH.lastSave?'Saved to GitHub.':''):(S.exported?'Downloaded. Put the new files in your library folder, replacing library.csv.':(S.fileName?'No changes since you opened the file.':''));
+}
+
+/* ---------- Form ---------- */
+function formChanged(){S.dirtyForm=true;}
+function updateCounter(){const n=stripTilde($('summary').value).length,el=$('count');el.textContent=n+' / '+LIMIT;el.parentElement.classList.toggle('warn',n>LIMIT);}
+function updateLinkHint(){
+  const c=cleanLink($('link').value),h=$('linkHint');h.className='hint';
+  if(!$('link').value.trim()){h.textContent='The QR code uses a clean link with tracking removed.';return;}
+  if(c.bad){h.textContent='That doesn\u2019t look like a web address yet.';h.classList.add('warn');return;}
+  h.textContent=(c.changed?'Tracking removed. QR opens ':'QR opens ')+c.url;h.classList.add('ok');
+}
+function setCover(blob,isNew){
+  const img=new Image();
+  img.onload=()=>{S.img=img;S.analysis=analyze(img);$('coverThumb').src=img.src;$('coverThumb').hidden=false;$('coverPh').hidden=true;
+    $('dropTitle').textContent='Replace cover image';render();};
+  img.onerror=()=>toast('That image couldn\u2019t be opened');
+  S.coverFile=isNew?blob:null;if(isNew)formChanged();img.src=URL.createObjectURL(blob);
+}
+function clearCover(){S.img=null;S.analysis=null;S.coverFile=null;$('coverThumb').hidden=true;$('coverThumb').removeAttribute('src');$('coverPh').hidden=false;$('dropTitle').textContent='Add cover image';}
+function artFor(id){return S.pendingArt[id]?S.pendingArt[id].blob:(S.artFiles[id]||null);}
+function hasRemoteArt(id){return !!(GH.cfg&&GH.art[id]);}
+function fillForm(a){
+  S.id=a?a.id:null;
+  $('artist').value=a?a.artist||'':'';$('title').value=a?a.title||'':'';$('year').value=a?a.year||'':'';
+  $('tracks').value=a?a.songs||'':'';$('minutes').value=a?a.minutes||'':'';$('link').value=a?a.link||'':'';$('summary').value=a?a.description||'':'';
+  const f=(a&&a.formats)||{};$('fVinyl').checked=!!f.vinyl;$('fCd').checked=!!f.cd;$('fServer').checked=!!f.server;
+  $('nfcUid').value=a?a.nfcUid||'':'';$('serverId').value=a?a.serverId||'':'';
+  S.family=a?a.family||null:null;S.mode=a?a.mode||'auto':'auto';S.stripe=a?a.stripe!==false:true;
+  clearCover();const art=a&&artFor(a.id);if(art)setCover(art,false);
+  else if(a&&hasRemoteArt(a.id)){const want=a.id;GH.fetchArt(want).then(b=>{if(b&&S.id===want&&!S.img)setCover(b,false);}).catch(()=>{});}
+  $('saveBtn').textContent=a?'Update in library':'Add to library';
+  const h=$('saveHint');h.className='hint';
+  h.textContent=a&&!art&&!hasRemoteArt(a.id)?'Add the cover image, or add your artwork folder so covers load automatically.':'';
+  S.dirtyForm=false;updateCounter();updateLinkHint();render();renderLib();
+}
+function addOrUpdate(quiet){
+  const hint=$('saveHint');hint.className='hint';
+  const artist=$('artist').value.trim(),title=$('title').value.trim();
+  if(!artist||!title){hint.textContent='Add the artist and album title first.';hint.classList.add('warn');return false;}
+  if(stripTilde($('summary').value).length>LIMIT){hint.textContent='Shorten the description to '+LIMIT+' characters first.';hint.classList.add('warn');return false;}
+  const id=S.id||(slug(artist)+'--'+slug(title)),prev=S.albums.find(x=>x.id===id);
+  const a={id,artist,title,year:$('year').value.trim(),formats:{vinyl:$('fVinyl').checked,cd:$('fCd').checked,server:$('fServer').checked},
+    songs:$('tracks').value.trim(),minutes:$('minutes').value.trim(),link:cleanLink($('link').value).url,description:$('summary').value.trim(),
+    family:S.family,mode:S.mode,stripe:S.stripe,nfcUid:$('nfcUid').value.trim(),serverId:$('serverId').value.trim(),extra:prev?prev.extra:{}};
+  if(prev)Object.assign(prev,a);else S.albums.push(a);S.changed.add(id);S.removed.delete(id);
+  if(S.coverFile){const t=S.coverFile.type||'';S.pendingArt[id]={blob:S.coverFile,ext:/png/.test(t)?'png':/webp/.test(t)?'webp':'jpg'};S.coverFile=null;}
+  S.id=id;S.dirtyForm=false;S.dirtyLib=true;S.exported=false;$('saveBtn').textContent='Update in library';
+  if(!quiet)toast(prev?'Updated in library':'Added to library');libStatus();renderLib();return true;
+}
+function renderLib(){
+  const list=$('list'),q=S.query.toLowerCase();list.innerHTML='';
+  const rows=S.albums.filter(a=>{const f=a.formats;
+      if(S.filter==='vinyl'&&!f.vinyl)return false;if(S.filter==='cd'&&!f.cd)return false;if(S.filter==='server'&&!f.server)return false;
+      if(S.filter==='none'&&(f.vinyl||f.cd||f.server))return false;
+      return !q||((a.artist||'')+' '+(a.title||'')).toLowerCase().includes(q);})
+    .sort((a,b)=>(a.artist||'').localeCompare(b.artist||'',undefined,{sensitivity:'base'})||String(a.year||'').localeCompare(String(b.year||'')));
+  if(!rows.length){const e=document.createElement('div');e.className='empty';
+    e.textContent=S.albums.length?'No albums match this filter.':'Open library.csv to see your albums here, or add a new album with the form.';list.append(e);return;}
+  rows.forEach(a=>{
+    const it=document.createElement('div');it.className='item'+(a.id===S.id?' current':'');
+    const art=artFor(a.id);let th;if(art){th=document.createElement('img');th.src=URL.createObjectURL(art);th.alt='';}
+    else if(hasRemoteArt(a.id)){th=document.createElement('img');th.alt='';th.className='loading';GH.fetchArt(a.id).then(b=>{if(b)th.src=URL.createObjectURL(b);}).catch(()=>{});}
+    else{th=document.createElement('span');th.className='ph';}
+    const t=document.createElement('div');t.className='t';const b=document.createElement('b');b.textContent=(a.artist||'?')+' \u2013 '+(a.title||'?');
+    const s=document.createElement('span');s.textContent=[a.year,a.nfcUid?'NFC '+a.nfcUid:''].filter(Boolean).join(', ')||'\u00A0';t.append(b,s);
+    const fm=document.createElement('div');fm.className='fmt';
+    [['vinyl','Vinyl'],['cd','CD'],['server','Music server']].forEach(([k,l])=>{
+      const lab=document.createElement('label');lab.className='check';const cb=document.createElement('input');cb.type='checkbox';cb.checked=!!a.formats[k];
+      cb.setAttribute('aria-label',l+' for '+(a.title||'album'));
+      cb.addEventListener('change',()=>{a.formats[k]=cb.checked;S.changed.add(a.id);S.dirtyLib=true;S.exported=false;
+        if(a.id===S.id)({vinyl:$('fVinyl'),cd:$('fCd'),server:$('fServer')})[k].checked=cb.checked;libStatus();});
+      lab.append(cb,document.createTextNode(' '+l));fm.append(lab);});
+    const ops=document.createElement('div');ops.className='ops';
+    const open=document.createElement('button');open.type='button';open.className='btn';open.textContent='Open';
+    open.addEventListener('click',()=>{fillForm(a);window.scrollTo({top:0,behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth'});});
+    const del=document.createElement('button');del.type='button';del.className='btn danger';del.textContent='Remove';
+    del.addEventListener('click',()=>{
+      if(!del.dataset.armed){del.dataset.armed='1';del.textContent='Confirm remove';setTimeout(()=>{if(del.isConnected){delete del.dataset.armed;del.textContent='Remove';}},4000);return;}
+      S.albums=S.albums.filter(x=>x!==a);delete S.pendingArt[a.id];S.removed.add(a.id);S.changed.delete(a.id);if(a.id===S.id){S.id=null;$('saveBtn').textContent='Add to library';}
+      S.dirtyLib=true;S.exported=false;libStatus();renderLib();toast('Removed '+(a.title||'album')+'. Its artwork and card files stay in Drive.');});
+    ops.append(open,del);it.append(th,t,fm,ops);list.append(it);
+  });
+}
+
+
+/* ---------- GitHub storage ---------- */
+const GH={cfg:null,art:{},cache:{},lastSave:false,
+  load(){try{const c=JSON.parse(localStorage.getItem('skanturis.github')||'null');if(c&&c.token&&c.owner&&c.repo)this.cfg=c;}catch(e){}},
+  store(c){try{if(c)localStorage.setItem('skanturis.github',JSON.stringify(c));else localStorage.removeItem('skanturis.github');}catch(e){}this.cfg=c;},
+  enc(p){return p.split('/').map(encodeURIComponent).join('/');},
+  async api(path,opts){opts=opts||{};const c=this.cfg;
+    const r=await fetch('https://api.github.com/repos/'+encodeURIComponent(c.owner)+'/'+encodeURIComponent(c.repo)+path,{method:opts.method||'GET',cache:'no-store',
+      headers:Object.assign({Authorization:'Bearer '+c.token,Accept:opts.accept||'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'},opts.body?{'Content-Type':'application/json'}:{}),
+      body:opts.body?JSON.stringify(opts.body):undefined});
+    if(!r.ok){let m='';try{m=(await r.json()).message||'';}catch(e){}const err=new Error(m||('GitHub error '+r.status));err.status=r.status;throw err;}
+    return opts.raw?r:(r.status===204?null:r.json());},
+  ref(){return '?ref='+encodeURIComponent(this.cfg.branch);},
+  async readCsv(){
+    try{const j=await this.api('/contents/library.csv'+this.ref());const bin=atob((j.content||'').replace(/\n/g,''));
+      const bytes=Uint8Array.from(bin,ch=>ch.charCodeAt(0));return {text:new TextDecoder().decode(bytes),sha:j.sha};}
+    catch(e){if(e.status===404)return {text:'',sha:null};throw e;}},
+  async listArt(){
+    try{const j=await this.api('/contents/artwork'+this.ref());const m={};
+      (Array.isArray(j)?j:[]).forEach(f=>{if(f.type==='file'&&/\.(jpe?g|png|webp)$/i.test(f.name))m[f.name.replace(/\.[^.]+$/,'')]=f.path;});return m;}
+    catch(e){if(e.status===404)return {};throw e;}},
+  fetchArt(id){
+    if(S.artFiles[id])return Promise.resolve(S.artFiles[id]);
+    if(!this.cache[id]&&this.art[id])this.cache[id]=this.api('/contents/'+this.enc(this.art[id])+this.ref(),{accept:'application/vnd.github.raw',raw:true})
+      .then(r=>r.blob()).then(b=>{S.artFiles[id]=b;return b;}).catch(e=>{delete this.cache[id];throw e;});
+    return this.cache[id]||Promise.resolve(null);},
+  async b64(blob){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(',')[1]||'');r.onerror=rej;r.readAsDataURL(blob);});},
+  async commit(files,message){
+    const br=encodeURIComponent(this.cfg.branch);
+    const ref=await this.api('/git/ref/heads/'+br),base=ref.object.sha,head=await this.api('/git/commits/'+base);
+    const tree=[];const shas={};
+    for(const f of files){const b=await this.api('/git/blobs',{method:'POST',body:{content:await this.b64(f.blob),encoding:'base64'}});
+      shas[f.path]=b.sha;tree.push({path:f.path,mode:'100644',type:'blob',sha:b.sha});}
+    const t=await this.api('/git/trees',{method:'POST',body:{base_tree:head.tree.sha,tree}});
+    const c=await this.api('/git/commits',{method:'POST',body:{message,tree:t.sha,parents:[base]}});
+    await this.api('/git/refs/heads/'+br,{method:'PATCH',body:{sha:c.sha}});
+    return shas;}
+};
+function ghMode(){
+  const on=!!GH.cfg;
+  $('ghBtn').textContent=on?'GitHub settings':'Connect GitHub';
+  $('ghReload').hidden=!on;$('ghSaveLib').hidden=!on;$('ghSaveAlbum').hidden=!on;
+  $('openCsvBtn').hidden=on;$('openArtBtn').hidden=on;
+  $('stageHint').textContent=on?'Saves the library row, the cover and both cards (PNG and PDF) in one commit.':'library.csv, the artwork and both cards, in your library folder layout.';
+  libStatus();
+}
+async function ghLoad(quiet){
+  if(!GH.cfg)return;
+  $('libStatus').textContent='Loading from GitHub…';$('libStatus').className='hint';
+  try{
+    const [csv,art]=await Promise.all([GH.readCsv(),GH.listArt()]);
+    const lib=parseLibrary(csv.text);
+    S.albums=lib.albums;S.extraCols=lib.extraCols;S.csvSha=csv.sha;S.changed=new Set();S.removed=new Set();
+    GH.art=art;GH.cache={};S.artFiles={};S.dirtyLib=false;S.fileName='library.csv';GH.lastSave=false;
+    libStatus();renderLib();if(!quiet)toast('Loaded '+S.albums.length+(S.albums.length===1?' album':' albums')+' from GitHub');
+    return true;
+  }catch(e){
+    const st=$('libStatus');st.className='hint warn';
+    st.textContent=e.status===401?'GitHub rejected the token. Open GitHub settings and paste a new one.':e.status===404?'Repository not found. Check the owner and name, and that the token can access it.':('Couldn\u2019t load from GitHub: '+e.message);
+    return false;
+  }
+}
+async function ghSave(withCards){
+  if(!GH.cfg)return;
+  if(withCards){
+    if(!$('artist').value.trim()||!$('title').value.trim()){toast('Add the artist and album title first');return;}
+    if((!S.id||S.dirtyForm)&&!addOrUpdate(true))return;
+  }
+  const btn=withCards?$('ghSaveAlbum'):$('ghSaveLib'),label=btn.textContent;btn.disabled=true;btn.textContent='Saving…';
+  try{
+    // merge with the latest file in case it was edited elsewhere
+    const remote=await GH.readCsv();
+    if(remote.sha&&remote.sha!==S.csvSha){
+      const lib=parseLibrary(remote.text),mine=new Map(S.albums.map(a=>[a.id,a]));
+      let merged=lib.albums.filter(a=>!S.removed.has(a.id)).map(a=>S.changed.has(a.id)&&mine.has(a.id)?mine.get(a.id):a);
+      S.changed.forEach(id=>{if(!merged.some(a=>a.id===id)&&mine.has(id))merged.push(mine.get(id));});
+      S.albums=merged;S.extraCols=[...new Set(lib.extraCols.concat(S.extraCols))];
+    }
+    let files;
+    if(withCards)files=await albumFiles();
+    else{files=[{path:'library.csv',blob:new Blob([libraryCsv()],{type:'text/csv'})}];
+      Object.entries(S.pendingArt).forEach(([k,v])=>files.push({path:'artwork/'+k+'.'+v.ext,blob:v.blob}));}
+    const who=withCards?($('artist').value.trim()+' \u2013 '+$('title').value.trim()):'library';
+    const shas=await GH.commit(files,withCards?('Cards: '+who):'Update library');
+    S.csvSha=shas['library.csv'];
+    Object.entries(S.pendingArt).forEach(([k,v])=>{GH.art[k]='artwork/'+k+'.'+v.ext;S.artFiles[k]=v.blob;});
+    S.pendingArt={};S.changed=new Set();S.removed=new Set();S.dirtyLib=false;GH.lastSave=true;
+    libStatus();renderLib();toast(withCards?'Saved '+who+' to GitHub':'Library saved to GitHub');
+  }catch(e){
+    const st=$('libStatus');st.className='hint warn';
+    st.textContent=e.status===401||e.status===403?'GitHub didn\u2019t allow the save. Check the token has Contents: read and write for this repository.':e.status===409||e.status===422?'The repository changed while saving. Choose Save again.':('Couldn\u2019t save to GitHub: '+e.message);
+    toast('Not saved');
+  }finally{btn.disabled=false;btn.textContent=label;}
+}
+function openGhDialog(){
+  const c=GH.cfg||{};if(c.owner)$('ghOwner').value=c.owner;if(c.repo)$('ghRepo').value=c.repo;if(c.branch)$('ghBranch').value=c.branch;
+  $('ghToken').value='';$('ghToken').placeholder=c.token?'Saved on this device (leave empty to keep)':'github_pat_\u2026';
+  $('ghDisconnect').hidden=!GH.cfg;$('ghMsg').textContent='';$('ghMsg').className='hint';
+  const d=$('ghDlg');if(d.showModal)d.showModal();else d.setAttribute('open','');
+}
+/* ---------- Wiring ---------- */
+['artist','title','year','tracks','minutes','summary','link','nfcUid','serverId'].forEach(id=>$(id).addEventListener('input',()=>{formChanged();if(id==='summary')updateCounter();if(id==='link')updateLinkHint();render();}));
+['fVinyl','fCd','fServer'].forEach(id=>$(id).addEventListener('change',formChanged));
+document.querySelectorAll('input[name=mode]').forEach(i=>i.addEventListener('change',()=>{S.mode=i.value;formChanged();render();}));
+$('stripeOn').addEventListener('change',e=>{S.stripe=e.target.checked;formChanged();render();});
+$('coverInput').addEventListener('change',e=>{const f=e.target.files&&e.target.files[0];if(f)setCover(f,true);e.target.value='';});
+const drop=$('drop');
+drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('coverInput').click();}});
+['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add('over');}));
+['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('over');}));
+drop.addEventListener('drop',e=>{const f=[...(e.dataTransfer.files||[])].find(f=>f.type.startsWith('image/'));if(f)setCover(f,true);});
+document.addEventListener('paste',e=>{if(e.target&&/INPUT|TEXTAREA/.test(e.target.tagName)&&!(e.clipboardData.files||[]).length)return;
+  const it=[...(e.clipboardData&&e.clipboardData.items||[])].find(i=>i.type.startsWith('image/'));
+  if(it){const f=it.getAsFile();if(f){e.preventDefault();setCover(f,true);toast('Cover pasted');}}});
+['openCsvBtn','openArtBtn'].forEach(id=>$(id).addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$(id).querySelector('input').click();}}));
+$('csvInput').addEventListener('change',async e=>{const f=e.target.files&&e.target.files[0];e.target.value='';if(!f)return;
+  if(S.dirtyLib&&!$('csvInput').dataset.ok){toast('Unsaved changes: choose Open library.csv again to discard them');$('csvInput').dataset.ok='1';setTimeout(()=>delete $('csvInput').dataset.ok,6000);return;}
+  loadCsv(await f.text(),f.name);});
+$('artInput').addEventListener('change',e=>{let n=0;[...(e.target.files||[])].forEach(f=>{if(!f.type.startsWith('image/'))return;
+    const id=f.name.replace(/\.[^.]+$/,'');S.artFiles[id]=f;n++;});e.target.value='';
+  toast(n?('Found '+n+' artwork files'):'No images in that folder');
+  if(S.id&&!S.img&&S.artFiles[S.id])setCover(S.artFiles[S.id],false);libStatus();renderLib();});
+$('saveBtn').addEventListener('click',()=>addOrUpdate(false));
+$('newBtn').addEventListener('click',()=>fillForm(null));
+document.querySelectorAll('[data-dl]').forEach(b=>b.addEventListener('click',async()=>{b.disabled=true;try{await doDownload(b.dataset.dl);}finally{b.disabled=false;}}));
+document.querySelectorAll('[data-filter]').forEach(b=>b.addEventListener('click',()=>{S.filter=b.dataset.filter;
+  document.querySelectorAll('[data-filter]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderLib();}));
+$('search').addEventListener('input',e=>{S.query=e.target.value;renderLib();});
+$('exportCsv').addEventListener('click',async()=>{if(!S.albums.length){toast('The library is empty');return;}
+  if(await save('library.csv',new Blob([libraryCsv()],{type:'text/csv'}))&&!GH.cfg){S.dirtyLib=false;S.exported=true;libStatus();}});
+
+$('ghBtn').addEventListener('click',openGhDialog);
+$('ghCancel').addEventListener('click',()=>$('ghDlg').close());
+$('ghDisconnect').addEventListener('click',()=>{GH.store(null);GH.art={};$('ghDlg').close();ghMode();toast('This device is disconnected');});
+$('ghConnect').addEventListener('click',async()=>{
+  const prev=GH.cfg,c={owner:$('ghOwner').value.trim(),repo:$('ghRepo').value.trim(),branch:$('ghBranch').value.trim()||'main',token:$('ghToken').value.trim()||(prev&&prev.token)||''};
+  const m=$('ghMsg');m.className='hint';
+  if(!c.owner||!c.repo||!c.token){m.textContent='Fill in owner, repository and token.';m.classList.add('warn');return;}
+  if(S.dirtyLib&&!confirmDiscard()){m.textContent='You have unsaved changes. Download library.csv first, or choose Connect again to discard them.';m.classList.add('warn');return;}
+  m.textContent='Checking…';GH.cfg=c;
+  if(await ghLoad(true)){GH.store(c);$('ghDlg').close();ghMode();toast('Connected to '+c.repo);}
+  else{m.textContent=$('libStatus').textContent;m.classList.add('warn');GH.cfg=prev;ghMode();}
+});
+let discardArmed=false;function confirmDiscard(){if(discardArmed)return true;discardArmed=true;setTimeout(()=>discardArmed=false,6000);return false;}
+$('ghReload').addEventListener('click',()=>{if(S.dirtyLib&&!confirmDiscard()){toast('Unsaved changes: choose Reload again to discard them');return;}ghLoad(false);});
+$('ghSaveLib').addEventListener('click',()=>ghSave(false));
+$('ghSaveAlbum').addEventListener('click',()=>ghSave(true));
+
+S.changed=new Set();S.removed=new Set();GH.load();
+buildSwatches();updateCounter();ghMode();renderLib();render();
+if(GH.cfg)ghLoad(true);
+if(document.fonts){Promise.all(['400 12px "Courier Prime"','700 20px "Courier Prime"','italic 700 20px "Courier Prime"'].map(f=>document.fonts.load(f).catch(()=>{}))).then(render);document.fonts.ready.then(render);}
+(async()=>{
+  downloads=window.claude&&window.claude.use?await window.claude.use('downloads').catch(()=>null):null;
+
+})();
+})();
+</script>
+</body>
+</html>
